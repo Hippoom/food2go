@@ -1,9 +1,11 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'war'
+apply plugin: 'jetty'
 
 sourceCompatibility = 1.6
 version = '0.0.1'
-jar {
+war {
 	manifest {
 		attributes 'Implementation-Title': 'Gradle Quickstart', 'Implementation-Version': version
 	}
