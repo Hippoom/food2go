@@ -1,4 +1,4 @@
-package com.github.hippoom.food2go.at;
+package com.github.hippoom.food2go.deploy;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
