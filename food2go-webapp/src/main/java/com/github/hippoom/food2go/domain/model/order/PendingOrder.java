@@ -2,8 +2,12 @@ package com.github.hippoom.food2go.domain.model.order;
 
 import java.util.Date;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString(of = "trackingId")
+@EqualsAndHashCode(of = "trackingId")
 public class PendingOrder {
 	@Getter
 	private TrackingId trackingId;

@@ -43,7 +43,11 @@ public class TransactionalPlaceOrderServiceImplUnitTests {
 				will(returnValue(trackingId));
 
 				oneOf(pendingOrderRepository).store(
-						with(any(PendingOrder.class)));
+						with(any(PendingOrder.class)));// cannot use explicit
+														// matcher if the
+														// PendingOrder is
+														// created by the
+														// application service
 			}
 		});
 

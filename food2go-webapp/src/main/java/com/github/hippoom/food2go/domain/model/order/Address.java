@@ -2,6 +2,7 @@ package com.github.hippoom.food2go.domain.model.order;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
@@ -16,6 +17,8 @@ import lombok.ToString;
  */
 @ToString
 @EqualsAndHashCode
+@NoArgsConstructor
+// @NoArgsConstructor for frameworks only
 public class Address {
 	@Getter
 	private String street1;
