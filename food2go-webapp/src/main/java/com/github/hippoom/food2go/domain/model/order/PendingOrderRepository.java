@@ -6,4 +6,6 @@ public interface PendingOrderRepository {
 
 	TrackingId nextTrackingId();
 
+	PendingOrder findBy(TrackingId trackingId);
+
 }
