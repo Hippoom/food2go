@@ -1,4 +1,4 @@
-package com.github.hippoom.food2go.infrastructure.persistence.jpa;
+package com.github.hippoom.food2go.infrastructure.persistence;
 
 import static org.dbunit.Assertion.assertEquals;
 import static org.dbunit.operation.DatabaseOperation.DELETE;
@@ -38,7 +38,7 @@ import com.github.hippoom.food2go.test.PersistenceTests;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:context-infrastructure-persistence.xml" })
-public class JpaPendingOrderRepositoryImplPersistenceTests implements
+public class PendingOrderRepositoryPersistenceTests implements
 		ApplicationContextAware, PersistenceTests {
 
 	private static final TrackingId TRACKING_ID_FOR_SAVE = new TrackingId(2L);
@@ -85,7 +85,7 @@ public class JpaPendingOrderRepositoryImplPersistenceTests implements
 	}
 
 	private PendingOrder protoypeForSave() {
-		return repository.findBy(TRACKING_ID_FOR_SAVE);
+		return repository.findOne(TRACKING_ID_FOR_SAVE);
 	}
 
 	private void refresh(String file) throws Exception {

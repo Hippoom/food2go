@@ -26,13 +26,14 @@ import com.github.hippoom.food2go.domain.model.order.Address;
 import com.github.hippoom.food2go.domain.model.order.AddressFixture;
 import com.github.hippoom.food2go.domain.model.order.PendingOrder;
 import com.github.hippoom.food2go.domain.model.order.PendingOrderFixture;
+import com.github.hippoom.food2go.test.IntegrationTests;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
 		"file:src/main/webapp/WEB-INF/booking-servlet.xml",
 		"classpath:mock-booking-servlet.xml" })
 @WebAppConfiguration
-public class PlaceOrderControllerIntegrationTests {
+public class PlaceOrderControllerIntegrationTests implements IntegrationTests {
 
 	@Autowired
 	private WebApplicationContext wac;

@@ -1,11 +1,10 @@
 package com.github.hippoom.food2go.domain.model.order;
 
-public interface PendingOrderRepository {
+import com.github.hippoom.food2go.infrastructure.persistence.PendingOrderRepositoryCustom;
+import com.github.hippoom.food2go.infrastructure.persistence.QueryRepository;
 
-	void store(PendingOrder pendingOrder);
 
-	TrackingId nextTrackingId();
-
-	PendingOrder findBy(TrackingId trackingId);
+public interface PendingOrderRepository extends
+		QueryRepository<PendingOrder, TrackingId>, PendingOrderRepositoryCustom {
 
 }

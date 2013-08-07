@@ -15,8 +15,8 @@ import org.junit.Test;
 import com.github.hippoom.food2go.domain.model.order.Address;
 import com.github.hippoom.food2go.domain.model.order.AddressFixture;
 import com.github.hippoom.food2go.domain.model.order.PendingOrder;
-import com.github.hippoom.food2go.domain.model.order.PendingOrderRepository;
 import com.github.hippoom.food2go.domain.model.order.TrackingId;
+import com.github.hippoom.food2go.infrastructure.persistence.PendingOrderRepositoryCustom;
 
 public class TransactionalPlaceOrderServiceImplUnitTests {
 	@Rule
@@ -24,7 +24,7 @@ public class TransactionalPlaceOrderServiceImplUnitTests {
 
 	private TransactionalPlaceOrderServiceImpl target = new TransactionalPlaceOrderServiceImpl();
 	@Mock
-	private PendingOrderRepository pendingOrderRepository;
+	private PendingOrderRepositoryCustom pendingOrderRepository;
 
 	@Before
 	public void inject() throws Exception {
