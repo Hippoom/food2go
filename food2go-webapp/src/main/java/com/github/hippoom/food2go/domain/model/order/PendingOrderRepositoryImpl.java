@@ -2,11 +2,13 @@ package com.github.hippoom.food2go.domain.model.order;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.hippoom.food2go.infrastructure.persistence.PendingOrderRepositoryCustom;
 
+@Transactional(readOnly = true)
 public class PendingOrderRepositoryImpl implements PendingOrderRepositoryCustom {
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -17,10 +19,10 @@ public class PendingOrderRepositoryImpl implements PendingOrderRepositoryCustom 
 		entityManager.persist(pendingOrder);
 	}
 
-	// @Override
+	@Override
 	public TrackingId nextTrackingId() {
-		// TODO Auto-generated method stub
-		return null;
+		Query query = entityManager
+				.createNativeQuery("select seq_f2g_pending_order.nextval from dual");
+		return new TrackingId(((Integer) query.getSingleResult()).longValue());
 	}
-
 }

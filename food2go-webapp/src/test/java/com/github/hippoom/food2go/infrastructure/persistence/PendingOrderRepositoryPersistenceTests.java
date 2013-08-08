@@ -3,6 +3,8 @@ package com.github.hippoom.food2go.infrastructure.persistence;
 import static org.dbunit.Assertion.assertEquals;
 import static org.dbunit.operation.DatabaseOperation.DELETE;
 import static org.dbunit.operation.DatabaseOperation.REFRESH;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,6 +51,14 @@ public class PendingOrderRepositoryPersistenceTests implements
 	private DataSource dataSource;
 
 	private ApplicationContext applicationContext;
+
+	@Test
+	public void getsNextTrackingIdFromSequence() {
+		TrackingId trackingId1 = repository.nextTrackingId();
+		TrackingId trackingId2 = repository.nextTrackingId();
+
+		assertThat(trackingId2.getValue(), equalTo(trackingId1.getValue() + 1));
+	}
 
 	@Test
 	public void saves() throws Exception {

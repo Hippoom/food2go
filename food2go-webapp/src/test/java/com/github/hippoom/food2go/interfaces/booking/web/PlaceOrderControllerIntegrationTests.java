@@ -31,7 +31,7 @@ import com.github.hippoom.food2go.test.IntegrationTests;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
 		"file:src/main/webapp/WEB-INF/booking-servlet.xml",
-		"classpath:mock-booking-servlet.xml" })
+		"classpath:test-booking-servlet.xml" })
 @WebAppConfiguration
 public class PlaceOrderControllerIntegrationTests implements IntegrationTests {
 
@@ -61,7 +61,7 @@ public class PlaceOrderControllerIntegrationTests implements IntegrationTests {
 				.thenReturn(pendingOrder);
 
 		mockMvc.perform(
-				post("/booking/placeOrder")
+				post("/placeOrder")
 						.param("deliveryAddressStreet1",
 								deliveryAddress.getStreet1())
 						.param("deliveryAddressStreet2",

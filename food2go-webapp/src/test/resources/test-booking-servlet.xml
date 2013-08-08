@@ -7,7 +7,7 @@
 
 
 
-	<bean id="transactionalPlaceOrderServiceImpl" class="org.mockito.Mockito"
+	<bean id="placeOrderService" class="org.mockito.Mockito"
 		factory-method="mock">
 		<constructor-arg
 			value="com.github.hippoom.food2go.application.PlaceOrderService" />

@@ -19,7 +19,7 @@
 
 	<bean
 		class="com.github.hippoom.food2go.interfaces.booking.web.PlaceOrderController">
-		<property name="placeOrderService" ref="transactionalPlaceOrderServiceImpl" />
+		<property name="placeOrderService" ref="placeOrderService" />
 	</bean>
 
 </beans>

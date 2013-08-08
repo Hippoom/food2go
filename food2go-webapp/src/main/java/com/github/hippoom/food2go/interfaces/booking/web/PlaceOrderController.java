@@ -6,6 +6,7 @@ import java.util.Date;
 import lombok.Setter;
 
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -17,7 +18,7 @@ import com.github.hippoom.food2go.application.PlaceOrderService;
 import com.github.hippoom.food2go.domain.model.order.PendingOrder;
 import com.github.hippoom.food2go.interfaces.booking.web.command.PlaceOrderCommand;
 
-@RequestMapping("/booking")
+@Controller
 public class PlaceOrderController {
 	@Setter
 	private PlaceOrderService placeOrderService;
