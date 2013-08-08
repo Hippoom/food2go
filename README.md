@@ -17,6 +17,6 @@ A: Scenario:acceptance test/user acceptance tests
    
    Scenario:persistence tests
    1.connect to embedded instance using "jdbc:hsqldb:mem:f2g;sql.syntax_ora=true"
-  			
+
 </pre>
 
