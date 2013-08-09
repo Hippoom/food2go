@@ -8,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
@@ -25,7 +24,7 @@ import lombok.ToString;
 /*
  * @SequenceGenerator(name = "seq_f2g_pending_order", sequenceName =
  * "seq_f2g_pending_order") this doesn't work, so I have to use /import.sql to
- * generate schema in persistenct tests.
+ * generate schema in persistence tests.
  */
 public class PendingOrder {
 	@EmbeddedId
