@@ -249,8 +249,8 @@
 					<userid>SA</userid>
 					<password></password>
 					<dbms>hsql</dbms>
-					<outputfile>src/test/scripts/do.sql</outputfile>
-					<undoOutputfile>src/test/scripts/undo.sql</undoOutputfile>
+					<outputfile>${project.build.directory}/sql/do.sql</outputfile>
+					<undoOutputfile>${project.build.directory}/sql/undo.sql</undoOutputfile>
 				</configuration>
 				<dependencies>
 					<dependency>
