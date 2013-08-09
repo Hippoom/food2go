@@ -2,7 +2,11 @@ package com.github.hippoom.food2go.features;
 
 import static com.github.hippoom.food2go.domain.model.order.PendingOrderFixture.rightAfter;
 import static java.util.Calendar.HOUR;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertThat;
+import lombok.extern.slf4j.Slf4j;
 
+import org.apache.http.client.fluent.Content;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
 import org.apache.http.message.BasicNameValuePair;
@@ -10,10 +14,10 @@ import org.apache.http.message.BasicNameValuePair;
 import com.github.hippoom.food2go.domain.model.order.Address;
 import com.github.hippoom.food2go.domain.model.order.PendingOrderFixture;
 
-import cucumber.api.PendingException;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
+@Slf4j
 public class PlaceOrderSteps {
 	private Response response;
 
@@ -40,7 +44,8 @@ public class PlaceOrderSteps {
 
 	@Then("^an pending order is placed$")
 	public void an_pending_order_is_placed() throws Throwable {
-		System.err.println(response.returnContent());
-		throw new PendingException();
+		Content content = response.returnContent();
+		log.debug(content.toString());
+		assertThat(content.asString(), containsString("TrackingId(value="));
 	}
 }
