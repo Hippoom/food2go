@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+	<target name="create-pending-sql-files">
+		<delete file="${project.build.directory}/sql/do.sql" verbose="true" />
+		<delete file="${project.build.directory}/sql/undo.sql" verbose="true" />
+		<touch file="${project.build.directory}/sql/do.sql" mkdirs="true" verbose="true" />
+		<touch file="${project.build.directory}/sql/undo.sql" mkdirs="true" verbose="true" />
+	</target>
+</project>

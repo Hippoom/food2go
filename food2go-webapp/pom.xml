@@ -226,7 +226,19 @@
 				<version>2.3</version>
 			</plugin>
 			<plugin>
-				<!-- dbdeploy:db-scripts -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<configuration>
+					<target>
+						<ant antfile="src/test/scripts/build.xml">
+							<target name="create-pending-sql-files" />
+						</ant>
+					</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<!-- dbdeploy:db-scripts/dbdeploy:update -->
 				<groupId>com.dbdeploy</groupId>
 				<artifactId>maven-dbdeploy-plugin</artifactId>
 				<version>3.0M3</version>
@@ -249,18 +261,6 @@
 				</dependencies>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.7</version>
-				<configuration>
-					<target>
-						<ant antfile="${project.build.directory}/test-classes/build.xml">
-							<target name="execuite-sql" />
-						</ant>
-					</target>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>8.1.9.v20130131</version>
@@ -273,4 +273,5 @@
 			</plugin>
 		</plugins>
 	</build>
+
 </project>
