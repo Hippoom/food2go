@@ -1,6 +1,6 @@
 package com.github.hippoom.food2go.interfaces.booking.web;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -24,6 +24,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.github.hippoom.food2go.application.PlaceOrderService;
 import com.github.hippoom.food2go.domain.model.order.Address;
 import com.github.hippoom.food2go.domain.model.order.AddressFixture;
+import com.github.hippoom.food2go.domain.model.order.NoAvailableRestaurantException;
 import com.github.hippoom.food2go.domain.model.order.PendingOrder;
 import com.github.hippoom.food2go.domain.model.order.PendingOrderFixture;
 import com.github.hippoom.food2go.test.IntegrationTests;
@@ -46,6 +47,8 @@ public class PlaceOrderControllerIntegrationTests implements IntegrationTests {
 	@Before
 	public void setup() {
 		this.mockMvc = webAppContextSetup(this.wac).build();
+
+		reset(placeOrderService);// reset mock
 	}
 
 	@Test
@@ -71,6 +74,32 @@ public class PlaceOrderControllerIntegrationTests implements IntegrationTests {
 				.andExpect(
 						forwardedUrl("/WEB-INF/jsp/booking/selectRestaurant.jsp"))
 				.andExpect(model().attribute("pendingOrder", pendingOrder));
+
+	}
+
+	@Test
+	public void returnsToPlaceOrderViewWhenFailsToPlaceOrder() throws Exception {
+
+		final Address deliveryAddress = new AddressFixture().build();
+		final String deliveryTime = twoHoursLater();
+
+		NoAvailableRestaurantException noAvailableRestaurantException = new NoAvailableRestaurantException(
+				deliveryAddress, with(deliveryTime));
+		when(placeOrderService.placeOrder(deliveryAddress, with(deliveryTime)))
+				.thenThrow(noAvailableRestaurantException);
+
+		mockMvc.perform(
+				post("/placeOrder")
+						.param("deliveryAddressStreet1",
+								deliveryAddress.getStreet1())
+						.param("deliveryAddressStreet2",
+								deliveryAddress.getStreet2())
+						.param("deliveryTime", deliveryTime))
+				.andExpect(status().isOk())
+				.andExpect(forwardedUrl("/WEB-INF/jsp/booking/placeOrder.jsp"))
+				.andExpect(
+						model().attribute("error",
+								noAvailableRestaurantException.getMessage()));
 
 	}
 

@@ -6,8 +6,11 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 
-	<import resource="classpath:context-application.xml" />
-	<import resource="classpath:context-domain.xml" />
-	<import resource="classpath:context-infrastructure-persistence.xml" />
+
+	<bean id="pendingOrderFactory"
+		class="com.github.hippoom.food2go.domain.model.order.PendingOrderFactory">
+		<property name="restaurantRepository" ref="restaurantRepository" />
+		<property name="pendingOrderRepository" ref="pendingOrderRepository" />
+	</bean>
 
 </beans>

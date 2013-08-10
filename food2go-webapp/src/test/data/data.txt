@@ -1,0 +1,17 @@
+T_F2G_PENDING_ORDER
+
+2 —— persistence tests save
+
+
+T_F2G_RESTAURANT   T_F2G_RESTAURANT_SRV_AREA          T_F2G_RESTAURANT_SRV_TIME
+
+persistence tests isAvalable
+
+2 Haidilao Hotpot  S1                                 Sat 09:00 20:00
+                   S2
+                   S3                                 Sun 09:00 20:00
+                   
+acceptance tests place order
+
+3 Lan zhou noodle  Kui zhao road                      Sat 09:00 20:00
+                   Wan an   road                      Sun 09:00 20:00

@@ -1,6 +1,6 @@
 package com.github.hippoom.food2go.application.impl;
 
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.Date;
@@ -8,58 +8,57 @@ import java.util.Date;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
 import com.github.hippoom.food2go.domain.model.order.Address;
-import com.github.hippoom.food2go.domain.model.order.AddressFixture;
 import com.github.hippoom.food2go.domain.model.order.PendingOrder;
-import com.github.hippoom.food2go.domain.model.order.TrackingId;
-import com.github.hippoom.food2go.infrastructure.persistence.PendingOrderRepositoryCustom;
+import com.github.hippoom.food2go.domain.model.order.PendingOrderFactory;
+import com.github.hippoom.food2go.domain.model.order.PendingOrderFixture;
+import com.github.hippoom.food2go.domain.model.order.PendingOrderRepository;
+import com.github.hippoom.food2go.test.UnitTests;
 
-public class TransactionalPlaceOrderServiceImplUnitTests {
+public class TransactionalPlaceOrderServiceImplUnitTests implements UnitTests {
 	@Rule
-	public final JUnitRuleMockery context = new JUnitRuleMockery();
+	public final JUnitRuleMockery context = new JUnitRuleMockery() {
+		{
+			setImposteriser(ClassImposteriser.INSTANCE);
+		}
+	};
 
 	private TransactionalPlaceOrderServiceImpl target = new TransactionalPlaceOrderServiceImpl();
 	@Mock
-	private PendingOrderRepositoryCustom pendingOrderRepository;
+	private PendingOrderRepository pendingOrderRepository;
+	@Mock
+	private PendingOrderFactory pendingOrderFactory;
 
 	@Before
 	public void inject() throws Exception {
 		target.setPendingOrderRepository(pendingOrderRepository);
+		target.setPendingOrderFactory(pendingOrderFactory);
 	}
 
 	@Test
 	public void placesAPendingOrder() throws Exception {
-		final TrackingId trackingId = new TrackingId(100L);
-		final Address deliveryAddress = new AddressFixture().build();
-		final Date deliveryTime = twoHoursLater();
+		final PendingOrder pendingOrder = new PendingOrderFixture().build();
+		final Address deliveryAddress = pendingOrder.getDeliveryAddress();
+		final Date deliveryTime = pendingOrder.getDeliveryTime();
 
 		context.checking(new Expectations() {
 			{
-				allowing(pendingOrderRepository).nextTrackingId();
-				will(returnValue(trackingId));
+				allowing(pendingOrderFactory).placeOrderWith(deliveryAddress,
+						deliveryTime);
+				will(returnValue(pendingOrder));
 
-				oneOf(pendingOrderRepository).store(
-						with(any(PendingOrder.class)));// cannot use explicit
-														// matcher if the
-														// PendingOrder is
-														// created by the
-														// application service
+				oneOf(pendingOrderRepository).store(pendingOrder);
 			}
 		});
 
 		PendingOrder order = target.placeOrder(deliveryAddress, deliveryTime);
 
-		assertThat(order.getTrackingId(), equalTo(trackingId));
-		assertThat(order.getDeliveryAddress(), equalTo(deliveryAddress));
-		assertThat(order.getDeliveryTime(), equalTo(deliveryTime));
+		assertThat(order, is(pendingOrder));
 	}
 
-	private Date twoHoursLater() {
-		return new Date();// application layer does not handle deliveryTime
-							// checking
-	}
 }

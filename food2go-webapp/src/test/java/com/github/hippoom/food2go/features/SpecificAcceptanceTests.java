@@ -15,7 +15,7 @@ import cucumber.api.junit.Cucumber;
  * 
  */
 @RunWith(Cucumber.class)
-@Cucumber.Options(features = { "classpath:features/." }, name = "Customer tries to place an pending order but failed for undeliverable address", format = { "html:target/acceptance-cucumber-html-report" })
+@Cucumber.Options(features = { "classpath:features/." }, name = "Customer places an pending order", format = { "html:target/acceptance-cucumber-html-report" })
 public class SpecificAcceptanceTests {
 
 }

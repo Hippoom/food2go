@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,7 @@ import com.github.hippoom.food2go.application.PlaceOrderService;
 import com.github.hippoom.food2go.domain.model.order.PendingOrder;
 import com.github.hippoom.food2go.interfaces.booking.web.command.PlaceOrderCommand;
 
+@Slf4j
 @Controller
 public class PlaceOrderController {
 	@Setter
@@ -43,10 +45,17 @@ public class PlaceOrderController {
 	public String placeOrder(
 			@ModelAttribute("command") PlaceOrderCommand command, Model model) {
 
-		final PendingOrder pendingOrder = placeOrderService.placeOrder(
-				command.getDeliveryAddress(), command.getDeliveryTime());
+		try {
+			final PendingOrder pendingOrder = placeOrderService.placeOrder(
+					command.getDeliveryAddress(), command.getDeliveryTime());
 
-		model.addAttribute("pendingOrder", pendingOrder);
-		return "selectRestaurant";
+			model.addAttribute("pendingOrder", pendingOrder);
+			return "selectRestaurant";
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			model.addAttribute("error", e.getMessage());
+			return "placeOrder";
+		}
+
 	}
 }

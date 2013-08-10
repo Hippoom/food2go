@@ -47,5 +47,9 @@
 		class="com.github.hippoom.food2go.infrastructure.persistence.jpa.PendingOrderRepositoryImpl">
 	</bean>
 
+	<bean id="restaurantRepository"
+		class="com.github.hippoom.food2go.infrastructure.persistence.jpa.RestaurantRepositoryImpl">
+	</bean>
+
 	<jpa:repositories base-package="com.github.hippoom.food2go.domain.model" />
 </beans>

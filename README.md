@@ -20,3 +20,5 @@ A: Scenario:acceptance test/user acceptance tests
 
 </pre>
 
+**Resources**
+Jpa criteria query:http://www.ibm.com/developerworks/java/library/j-typesafejpa/
