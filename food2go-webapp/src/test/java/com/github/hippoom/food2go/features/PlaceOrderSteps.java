@@ -1,5 +1,6 @@
 package com.github.hippoom.food2go.features;
 
+import static com.github.hippoom.test.dbunit.DatabaseOperationBuilder.flatXml;
 import static org.dbunit.operation.DatabaseOperation.DELETE_ALL;
 import static org.dbunit.operation.DatabaseOperation.INSERT;
 import static org.hamcrest.Matchers.containsString;
@@ -7,8 +8,6 @@ import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -21,20 +20,13 @@ import org.apache.http.client.fluent.Content;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
 import org.apache.http.message.BasicNameValuePair;
-import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.xml.FlatXmlDataSet;
-import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
-import org.dbunit.operation.CloseConnectionOperation;
-import org.dbunit.operation.DatabaseOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import com.github.hippoom.food2go.domain.model.order.Address;
 import com.github.hippoom.food2go.domain.model.order.PendingOrderFixture;
+import com.github.hippoom.test.dbunit.DatabaseOperationBuilder;
 
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -129,38 +121,16 @@ public class PlaceOrderSteps implements ApplicationContextAware {
 	}
 
 	private void refreshAvailableRestaurants() throws Exception {
+		// It's convenient to use manipulate the database directly, but it is also vulnerable if the schema changes.
+		// But I haven't develop restaurant admin feature yet, so it's the only option for now
 		String file = "classpath:t_f2g_restaurant_place_order.xml";
-		deleteAll(file);// cannot use refresh because cannot set pk via
-						// @CollectionTable
-		insert(file);
-	}
-
-	private void deleteAll(String file) throws Exception {
-		execute(DELETE_ALL, file);
-	}
-
-	private void insert(String file) throws Exception {
-		execute(INSERT, file);
-	}
-
-	private void execute(DatabaseOperation refresh, String file)
-			throws DatabaseUnitException, SQLException, MalformedURLException,
-			DataSetException, IOException {
-		new CloseConnectionOperation(refresh).execute(getConnection(),
-				flatXmlDataSet(file(file)));
+		new DatabaseOperationBuilder(dataSource)
+				.to(DELETE_ALL, flatXml(file(file)))
+				.to(INSERT, flatXml(file(file))).execute();
 	}
 
 	private File file(String file) throws IOException {
 		return applicationContext.getResource(file).getFile();
 	}
 
-	private FlatXmlDataSet flatXmlDataSet(File file)
-			throws MalformedURLException, DataSetException {
-		return new FlatXmlDataSetBuilder().build(file);
-	}
-
-	private IDatabaseConnection getConnection() throws DatabaseUnitException,
-			SQLException {
-		return new DatabaseConnection(dataSource.getConnection());
-	}
 }

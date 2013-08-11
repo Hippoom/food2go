@@ -1,5 +1,6 @@
 package com.github.hippoom.food2go.infrastructure.persistence;
 
+import static com.github.hippoom.test.dbunit.DatabaseOperationBuilder.flatXml;
 import static org.dbunit.operation.DatabaseOperation.DELETE_ALL;
 import static org.dbunit.operation.DatabaseOperation.INSERT;
 import static org.hamcrest.Matchers.is;
@@ -7,8 +8,6 @@ import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -16,14 +15,6 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
-import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.xml.FlatXmlDataSet;
-import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
-import org.dbunit.operation.CloseConnectionOperation;
-import org.dbunit.operation.DatabaseOperation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeansException;
@@ -36,6 +27,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.github.hippoom.food2go.domain.model.order.Address;
 import com.github.hippoom.food2go.domain.model.restaurant.RestaurantRepository;
 import com.github.hippoom.food2go.test.PersistenceTests;
+import com.github.hippoom.test.dbunit.DatabaseOperationBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:context-infrastructure-persistence.xml" })
@@ -217,39 +209,15 @@ public class RestaurantRepositoryPersistenceTests implements
 	}
 
 	private void refreshAvailableRestaurants() throws Exception {
-		String file = "classpath:t_f2g_restaurant_available.xml";
-		deleteAll(file);// cannot use refresh because cannot set pk via
-						// @CollectionTable
-		insert(file);
-	}
-
-	private void deleteAll(String file) throws Exception {
-		execute(DELETE_ALL, file);
-	}
-
-	private void insert(String file) throws Exception {
-		execute(INSERT, file);
-	}
-
-	private void execute(DatabaseOperation refresh, String file)
-			throws DatabaseUnitException, SQLException, MalformedURLException,
-			DataSetException, IOException {
-		new CloseConnectionOperation(refresh).execute(getConnection(),
-				flatXmlDataSet(file(file)));
+		String fixture = "classpath:t_f2g_restaurant_available.xml";
+		// cannot use refresh because cannot set pk via @CollectionTable
+		new DatabaseOperationBuilder(dataSource)
+				.to(DELETE_ALL, flatXml(file(fixture)))
+				.to(INSERT, flatXml(file(fixture))).execute();
 	}
 
 	private File file(String file) throws IOException {
 		return applicationContext.getResource(file).getFile();
-	}
-
-	private FlatXmlDataSet flatXmlDataSet(File file)
-			throws MalformedURLException, DataSetException {
-		return new FlatXmlDataSetBuilder().build(file);
-	}
-
-	private IDatabaseConnection getConnection() throws DatabaseUnitException,
-			SQLException {
-		return new DatabaseConnection(dataSource.getConnection());
 	}
 
 	@Override

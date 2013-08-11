@@ -1,5 +1,6 @@
 package com.github.hippoom.food2go.infrastructure.persistence;
 
+import static com.github.hippoom.test.dbunit.DatabaseOperationBuilder.flatXml;
 import static org.dbunit.Assertion.assertEquals;
 import static org.dbunit.operation.DatabaseOperation.DELETE;
 import static org.dbunit.operation.DatabaseOperation.REFRESH;
@@ -8,7 +9,6 @@ import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
@@ -17,12 +17,7 @@ import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.QueryDataSet;
-import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.xml.FlatXmlDataSet;
-import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
-import org.dbunit.operation.CloseConnectionOperation;
-import org.dbunit.operation.DatabaseOperation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.modelmapper.ModelMapper;
@@ -37,6 +32,7 @@ import com.github.hippoom.food2go.domain.model.order.PendingOrder;
 import com.github.hippoom.food2go.domain.model.order.PendingOrderRepository;
 import com.github.hippoom.food2go.domain.model.order.TrackingId;
 import com.github.hippoom.food2go.test.PersistenceTests;
+import com.github.hippoom.test.dbunit.DatabaseOperationBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:context-infrastructure-persistence.xml" })
@@ -86,7 +82,7 @@ public class PendingOrderRepositoryPersistenceTests implements
 	}
 
 	private IDataSet expectedSaved() throws Exception {
-		return flatXmlDataSet(file(testFixtureForSave()));
+		return flatXml(file(testFixtureForSave()));
 	}
 
 	private PendingOrder copyFrom(PendingOrder protoype) {
@@ -99,27 +95,17 @@ public class PendingOrderRepositoryPersistenceTests implements
 	}
 
 	private void refresh(String file) throws Exception {
-		execute(REFRESH, file);
-	}
-
-	private void execute(DatabaseOperation refresh, String file)
-			throws DatabaseUnitException, SQLException, MalformedURLException,
-			DataSetException, IOException {
-		new CloseConnectionOperation(refresh).execute(getConnection(),
-				flatXmlDataSet(file(file)));
+		new DatabaseOperationBuilder(dataSource).to(REFRESH,
+				flatXml(file(file))).execute();
 	}
 
 	private File file(String file) throws IOException {
 		return applicationContext.getResource(file).getFile();
 	}
 
-	private FlatXmlDataSet flatXmlDataSet(File file)
-			throws MalformedURLException, DataSetException {
-		return new FlatXmlDataSetBuilder().build(file);
-	}
-
 	private void delete(String file) throws Exception {
-		execute(DELETE, file);
+		new DatabaseOperationBuilder(dataSource)
+				.to(DELETE, flatXml(file(file))).execute();
 	}
 
 	private IDatabaseConnection getConnection() throws DatabaseUnitException,
