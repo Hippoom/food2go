@@ -29,7 +29,7 @@ public class DatabaseOperationBuilder {
 		this.dataSource = dataSource;
 	}
 
-	private IDatabaseConnection getConnection() throws DatabaseUnitException,
+	public IDatabaseConnection getConnection() throws DatabaseUnitException,
 			SQLException {
 		return new DatabaseConnection(dataSource.getConnection());
 	}

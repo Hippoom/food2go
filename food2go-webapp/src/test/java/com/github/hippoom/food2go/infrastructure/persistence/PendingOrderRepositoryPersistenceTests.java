@@ -110,7 +110,7 @@ public class PendingOrderRepositoryPersistenceTests implements
 
 	private IDatabaseConnection getConnection() throws DatabaseUnitException,
 			SQLException {
-		return new DatabaseConnection(dataSource.getConnection());
+		return new DatabaseOperationBuilder(dataSource).getConnection();
 	}
 
 	@Override
