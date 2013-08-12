@@ -35,7 +35,7 @@ import com.github.hippoom.food2go.test.PersistenceTests;
 import com.github.hippoom.test.dbunit.DatabaseOperationBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:context-infrastructure-persistence.xml" })
+@ContextConfiguration(loader = ApplicationContextLoaderForPersistenceTests.class)
 public class PendingOrderRepositoryPersistenceTests implements
 		ApplicationContextAware, PersistenceTests {
 
