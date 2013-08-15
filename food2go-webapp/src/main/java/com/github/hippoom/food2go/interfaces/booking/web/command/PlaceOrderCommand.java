@@ -2,7 +2,11 @@ package com.github.hippoom.food2go.interfaces.booking.web.command;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+
 import lombok.Data;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.github.hippoom.food2go.domain.model.order.Address;
 
@@ -24,8 +28,11 @@ import com.github.hippoom.food2go.domain.model.order.Address;
  */
 @Data
 public class PlaceOrderCommand {
+	@NotEmpty
 	private String deliveryAddressStreet1;
+	@NotEmpty
 	private String deliveryAddressStreet2;
+	@NotNull
 	private Date deliveryTime;
 
 	public Address getDeliveryAddress() {

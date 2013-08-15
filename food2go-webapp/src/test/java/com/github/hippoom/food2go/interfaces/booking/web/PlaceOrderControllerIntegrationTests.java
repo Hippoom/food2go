@@ -1,8 +1,10 @@
 package com.github.hippoom.food2go.interfaces.booking.web;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -27,6 +29,7 @@ import com.github.hippoom.food2go.domain.model.order.AddressFixture;
 import com.github.hippoom.food2go.domain.model.order.NoAvailableRestaurantException;
 import com.github.hippoom.food2go.domain.model.order.PendingOrder;
 import com.github.hippoom.food2go.domain.model.order.PendingOrderFixture;
+import com.github.hippoom.food2go.interfaces.booking.web.command.PlaceOrderCommand;
 import com.github.hippoom.food2go.test.IntegrationTests;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -49,6 +52,18 @@ public class PlaceOrderControllerIntegrationTests implements IntegrationTests {
 		this.mockMvc = webAppContextSetup(this.wac).build();
 
 		reset(placeOrderService);// reset mock
+	}
+
+	@Test
+	public void showPlaceOrderForm() throws Exception {
+
+		mockMvc.perform(get("/placeOrder"))
+				.andExpect(status().isOk())
+				.andExpect(forwardedUrl("/WEB-INF/jsp/booking/placeOrder.jsp"))
+				.andExpect(
+						model().attribute("command", new PlaceOrderCommand()));
+		;
+
 	}
 
 	@Test
@@ -78,7 +93,7 @@ public class PlaceOrderControllerIntegrationTests implements IntegrationTests {
 	}
 
 	@Test
-	public void returnsToPlaceOrderViewWhenFailsToPlaceOrder() throws Exception {
+	public void returnsToPlaceOrderViewWhenDomainLogicBroken() throws Exception {
 
 		final Address deliveryAddress = new AddressFixture().build();
 		final String deliveryTime = twoHoursLater();
@@ -95,11 +110,26 @@ public class PlaceOrderControllerIntegrationTests implements IntegrationTests {
 						.param("deliveryAddressStreet2",
 								deliveryAddress.getStreet2())
 						.param("deliveryTime", deliveryTime))
-				.andExpect(status().isOk())
-				.andExpect(forwardedUrl("/WEB-INF/jsp/booking/placeOrder.jsp"))
-				.andExpect(
-						model().attribute("error",
-								noAvailableRestaurantException.getMessage()));
+				.andExpect(redirectedUrl("/booking/placeOrder"))
+				.andExpect(flash().attributeExists("command", "bindingResult"));
+
+	}
+
+	@Test
+	public void returnsToPlaceOrderViewWhenValidationBroken() throws Exception {
+
+		final Address deliveryAddress = new AddressFixture().build();
+		final String deliveryTime = null;
+
+		mockMvc.perform(
+				post("/placeOrder")
+						.param("deliveryAddressStreet1",
+								deliveryAddress.getStreet1())
+						.param("deliveryAddressStreet2",
+								deliveryAddress.getStreet2())
+						.param("deliveryTime", deliveryTime))
+				.andExpect(redirectedUrl("/booking/placeOrder"))
+				.andExpect(flash().attributeExists("command", "bindingResult"));
 
 	}
 
