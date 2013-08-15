@@ -3,17 +3,22 @@ package com.github.hippoom.food2go.interfaces.booking.web;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.validation.Valid;
+
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.github.hippoom.food2go.application.PlaceOrderService;
 import com.github.hippoom.food2go.domain.model.order.PendingOrder;
@@ -33,6 +38,20 @@ public class PlaceOrderController {
 				dateFormat, false));
 	}
 
+	@ModelAttribute("command")
+	public PlaceOrderCommand command() {
+		return new PlaceOrderCommand();
+	}
+
+	@RequestMapping(value = "/placeOrder", method = RequestMethod.GET)
+	public String placeOrder(
+			@ModelAttribute("command") PlaceOrderCommand command,
+			ModelMap modelMap) {
+		modelMap.put(BindingResult.MODEL_KEY_PREFIX + "command",
+				modelMap.get("bindingResult"));
+		return "placeOrder";
+	}
+
 	/**
 	 * <pre>
 	 * A customer inputs deliveryAddress and deliveryTime 
@@ -43,8 +62,13 @@ public class PlaceOrderController {
 	 */
 	@RequestMapping(value = "/placeOrder", method = RequestMethod.POST)
 	public String placeOrder(
-			@ModelAttribute("command") PlaceOrderCommand command, Model model) {
-
+			@Valid @ModelAttribute("command") PlaceOrderCommand command,
+			final BindingResult bindingResult, Model model,
+			final RedirectAttributes redirectAttributes) {
+		if (bindingResult.hasErrors()) {
+			return redirectToPlaceOrderGet(redirectAttributes, command,
+					bindingResult);
+		}
 		try {
 			final PendingOrder pendingOrder = placeOrderService.placeOrder(
 					command.getDeliveryAddress(), command.getDeliveryTime());
@@ -53,9 +77,16 @@ public class PlaceOrderController {
 			return "selectRestaurant";
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
-			model.addAttribute("error", e.getMessage());
-			return "placeOrder";
+			return redirectToPlaceOrderGet(redirectAttributes, command,
+					bindingResult);
 		}
+	}
 
+	private String redirectToPlaceOrderGet(
+			final RedirectAttributes redirectAttributes,
+			PlaceOrderCommand command, final BindingResult bindingResult) {
+		redirectAttributes.addFlashAttribute("bindingResult", bindingResult);
+		redirectAttributes.addFlashAttribute("command", command);
+		return "redirect:/booking/placeOrder";
 	}
 }
