@@ -13,4 +13,10 @@
 			value="com.github.hippoom.food2go.application.PlaceOrderService" />
 	</bean>
 
+	<bean id="pendingOrderRepository" class="org.mockito.Mockito"
+		factory-method="mock">
+		<constructor-arg
+			value="com.github.hippoom.food2go.domain.model.order.PendingOrderRepository" />
+	</bean>
+
 </beans>

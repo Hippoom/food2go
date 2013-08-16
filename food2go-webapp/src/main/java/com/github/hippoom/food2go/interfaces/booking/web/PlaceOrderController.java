@@ -73,19 +73,31 @@ public class PlaceOrderController {
 			final PendingOrder pendingOrder = placeOrderService.placeOrder(
 					command.getDeliveryAddress(), command.getDeliveryTime());
 
-			model.addAttribute("pendingOrder", pendingOrder);
-			return "selectRestaurant";
+			return redirectToUpdateRestaurantGetWith(pendingOrder);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
-			return redirectToPlaceOrderGet(redirectAttributes, command,
-					bindingResult);
+			return redirectToPlaceOrderGet(redirectAttributes, command, e);
 		}
+	}
+
+	private String redirectToUpdateRestaurantGetWith(
+			final PendingOrder pendingOrder) {
+		return "redirect:/booking/updateRestaurant/"
+				+ pendingOrder.getTrackingId().getValue();
 	}
 
 	private String redirectToPlaceOrderGet(
 			final RedirectAttributes redirectAttributes,
 			PlaceOrderCommand command, final BindingResult bindingResult) {
 		redirectAttributes.addFlashAttribute("bindingResult", bindingResult);
+		redirectAttributes.addFlashAttribute("command", command);
+		return "redirect:/booking/placeOrder";
+	}
+
+	private String redirectToPlaceOrderGet(
+			final RedirectAttributes redirectAttributes,
+			PlaceOrderCommand command, final Throwable throwable) {
+		redirectAttributes.addFlashAttribute("error", throwable.getMessage());
 		redirectAttributes.addFlashAttribute("command", command);
 		return "redirect:/booking/placeOrder";
 	}
