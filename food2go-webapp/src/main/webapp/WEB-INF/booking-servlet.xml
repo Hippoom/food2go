@@ -22,4 +22,9 @@
 		<property name="placeOrderService" ref="placeOrderService" />
 	</bean>
 
+	<bean
+		class="com.github.hippoom.food2go.interfaces.booking.web.UpdateRestaurantController">
+		<property name="pendingOrderRepository" ref="pendingOrderRepository" />
+	</bean>
+
 </beans>

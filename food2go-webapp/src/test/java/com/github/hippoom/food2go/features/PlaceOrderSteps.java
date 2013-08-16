@@ -17,8 +17,11 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.http.client.fluent.Content;
+import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -51,15 +54,18 @@ public class PlaceOrderSteps implements ApplicationContextAware {
 
 	@When("^I submit delivery address and delivery time$")
 	public void I_submit_delivery_address_and_delivery_time() throws Throwable {
-
-		Response response = Request
-				.Post("http://localhost:9999/food2go/booking/placeOrder")
-				.bodyForm(
-						param("deliveryAddressStreet1",
-								deliveryAddress.getStreet1()),
-						param("deliveryAddressStreet2",
-								deliveryAddress.getStreet2()),
-						param("deliveryTime", deliveryTime)).execute();
+		/*
+		 * see http://stackoverflow.com/questions/18256423/how-to-handle-redirect-by-
+		 * httpclient-fluent/18271327?noredirect=1#18271327
+		 */
+		DefaultHttpClient client = new DefaultHttpClient();
+		client.setRedirectStrategy(new LaxRedirectStrategy());
+		Executor exec = Executor.newInstance(client);
+		Response response = exec.execute(Request.Post(
+				"http://localhost:9999/food2go/booking/placeOrder").bodyForm(
+				param("deliveryAddressStreet1", deliveryAddress.getStreet1()),
+				param("deliveryAddressStreet2", deliveryAddress.getStreet2()),
+				param("deliveryTime", deliveryTime)));
 		content = response.returnContent();
 		log.debug(content.toString());
 	}
@@ -121,8 +127,10 @@ public class PlaceOrderSteps implements ApplicationContextAware {
 	}
 
 	private void refreshAvailableRestaurants() throws Exception {
-		// It's convenient to use manipulate the database directly, but it is also vulnerable if the schema changes.
-		// But I haven't develop restaurant admin feature yet, so it's the only option for now
+		// It's convenient to use manipulate the database directly, but it is
+		// also vulnerable if the schema changes.
+		// But I haven't develop restaurant admin feature yet, so it's the only
+		// option for now
 		String file = "classpath:t_f2g_restaurant_place_order.xml";
 		new DatabaseOperationBuilder(dataSource)
 				.to(DELETE_ALL, flatXml(file(file)))

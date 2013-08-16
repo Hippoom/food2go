@@ -1,11 +1,14 @@
 package com.github.hippoom.food2go.interfaces.booking.web;
 
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -29,6 +32,7 @@ import com.github.hippoom.food2go.domain.model.order.AddressFixture;
 import com.github.hippoom.food2go.domain.model.order.NoAvailableRestaurantException;
 import com.github.hippoom.food2go.domain.model.order.PendingOrder;
 import com.github.hippoom.food2go.domain.model.order.PendingOrderFixture;
+import com.github.hippoom.food2go.domain.model.order.PendingOrderRepository;
 import com.github.hippoom.food2go.interfaces.booking.web.command.PlaceOrderCommand;
 import com.github.hippoom.food2go.test.IntegrationTests;
 
@@ -37,7 +41,7 @@ import com.github.hippoom.food2go.test.IntegrationTests;
 		"file:src/main/webapp/WEB-INF/booking-servlet.xml",
 		"classpath:test-booking-servlet.xml" })
 @WebAppConfiguration
-public class PlaceOrderControllerIntegrationTests implements IntegrationTests {
+public class BookingMvcIntegrationTests implements IntegrationTests {
 
 	@Autowired
 	private WebApplicationContext wac;
@@ -47,11 +51,15 @@ public class PlaceOrderControllerIntegrationTests implements IntegrationTests {
 	@Autowired
 	private PlaceOrderService placeOrderService;
 
+	@Autowired
+	private PendingOrderRepository pendingOrderRepository;
+
 	@Before
 	public void setup() {
 		this.mockMvc = webAppContextSetup(this.wac).build();
 
 		reset(placeOrderService);// reset mock
+		reset(pendingOrderRepository);// reset mock
 	}
 
 	@Test
@@ -62,7 +70,24 @@ public class PlaceOrderControllerIntegrationTests implements IntegrationTests {
 				.andExpect(forwardedUrl("/WEB-INF/jsp/booking/placeOrder.jsp"))
 				.andExpect(
 						model().attribute("command", new PlaceOrderCommand()));
-		;
+
+	}
+
+	@Test
+	public void showUpdateRetaurantForm() throws Exception {
+
+		final PendingOrder pendingOrder = new PendingOrderFixture().build();
+
+		when(pendingOrderRepository.findOne(pendingOrder.getTrackingId()))
+				.thenReturn(pendingOrder);
+
+		mockMvc.perform(
+				get("/updateRestaurant/"
+						+ pendingOrder.getTrackingId().getValue()))
+				.andExpect(status().isOk())
+				.andExpect(
+						forwardedUrl("/WEB-INF/jsp/booking/updateRestaurant.jsp"))
+				.andExpect(model().attribute("pendingOrder", pendingOrder));
 
 	}
 
@@ -84,11 +109,9 @@ public class PlaceOrderControllerIntegrationTests implements IntegrationTests {
 								deliveryAddress.getStreet1())
 						.param("deliveryAddressStreet2",
 								deliveryAddress.getStreet2())
-						.param("deliveryTime", deliveryTime))
-				.andExpect(status().isOk())
-				.andExpect(
-						forwardedUrl("/WEB-INF/jsp/booking/selectRestaurant.jsp"))
-				.andExpect(model().attribute("pendingOrder", pendingOrder));
+						.param("deliveryTime", deliveryTime)).andExpect(
+				redirectedUrl("/booking/updateRestaurant/"
+						+ pendingOrder.getTrackingId().getValue()));
 
 	}
 
@@ -111,7 +134,10 @@ public class PlaceOrderControllerIntegrationTests implements IntegrationTests {
 								deliveryAddress.getStreet2())
 						.param("deliveryTime", deliveryTime))
 				.andExpect(redirectedUrl("/booking/placeOrder"))
-				.andExpect(flash().attributeExists("command", "bindingResult"));
+				.andExpect(flash().attributeExists("command"))
+				.andExpect(
+						flash().attribute("error",
+								containsString("no restaurant available")));
 
 	}
 
