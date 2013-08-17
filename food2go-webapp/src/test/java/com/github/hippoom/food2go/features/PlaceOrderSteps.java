@@ -31,6 +31,7 @@ import com.github.hippoom.food2go.domain.model.order.Address;
 import com.github.hippoom.food2go.domain.model.order.PendingOrderFixture;
 import com.github.hippoom.test.dbunit.DatabaseOperationBuilder;
 
+import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -55,8 +56,9 @@ public class PlaceOrderSteps implements ApplicationContextAware {
 	@When("^I submit delivery address and delivery time$")
 	public void I_submit_delivery_address_and_delivery_time() throws Throwable {
 		/*
-		 * see http://stackoverflow.com/questions/18256423/how-to-handle-redirect-by-
-		 * httpclient-fluent/18271327?noredirect=1#18271327
+		 * see
+		 * http://stackoverflow.com/questions/18256423/how-to-handle-redirect
+		 * -by- httpclient-fluent/18271327?noredirect=1#18271327
 		 */
 		DefaultHttpClient client = new DefaultHttpClient();
 		client.setRedirectStrategy(new LaxRedirectStrategy());
@@ -77,6 +79,12 @@ public class PlaceOrderSteps implements ApplicationContextAware {
 	@Then("^an pending order is placed$")
 	public void an_pending_order_is_placed() throws Throwable {
 		assertThat(content.asString(), containsString("TrackingId(value="));
+	}
+
+	@Then("^all available restaurants are listed$")
+	public void all_available_restaurants_are_listed() throws Throwable {
+		// Express the Regexp above with the code you wish you had
+		throw new PendingException();
 	}
 
 	@Given("^my delivery address is not in service area of any restaurant$")

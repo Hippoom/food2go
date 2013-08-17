@@ -11,6 +11,7 @@ Scenario: Customer places an pending order
 
 When I submit delivery address and delivery time
 Then an pending order is placed
+And all available restaurants are listed
 
 Scenario: Customer tries to place an pending order but failed for undeliverable address
 
