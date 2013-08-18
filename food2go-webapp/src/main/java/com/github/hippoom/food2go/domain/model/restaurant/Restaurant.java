@@ -18,7 +18,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@ToString(of = "id")
+@ToString(of = { "id", "name" })
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 // for frameworks only
@@ -41,4 +41,9 @@ public class Restaurant {
 			@AttributeOverride(name = "start", column = @Column(name = "TIME_RANGE_START")),
 			@AttributeOverride(name = "end", column = @Column(name = "TIME_RANGE_END")) })
 	private List<TimeRange> serviceTimeRanges = new ArrayList<TimeRange>();
+
+	public Restaurant(RestaurantIdentity id, String name) {
+		this.id = id;
+		this.name = name;
+	}
 }

@@ -3,7 +3,7 @@ package com.github.hippoom.food2go.infrastructure.persistence;
 import static com.github.hippoom.test.dbunit.DatabaseOperationBuilder.flatXml;
 import static org.dbunit.operation.DatabaseOperation.DELETE_ALL;
 import static org.dbunit.operation.DatabaseOperation.INSERT;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -25,6 +26,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.hippoom.food2go.domain.model.order.Address;
+import com.github.hippoom.food2go.domain.model.restaurant.Restaurant;
 import com.github.hippoom.food2go.domain.model.restaurant.RestaurantRepository;
 import com.github.hippoom.food2go.test.PersistenceTests;
 import com.github.hippoom.test.dbunit.DatabaseOperationBuilder;
@@ -80,8 +82,12 @@ public class RestaurantRepositoryPersistenceTests implements
 
 		final boolean result = repository.isAvailableFor(deliveryAddress,
 				deliveryTime);
+		final List<Restaurant> restaurants = repository.findAvailableFor(
+				deliveryAddress, deliveryTime);
 
 		assertThat(result, is(false));
+		System.out.println(restaurants);
+		assertThat(restaurants, empty());
 	}
 
 	@Test
@@ -94,8 +100,10 @@ public class RestaurantRepositoryPersistenceTests implements
 
 		final boolean result = repository.isAvailableFor(deliveryAddress,
 				deliveryTime);
-
+		final List<Restaurant> restaurants = repository.findAvailableFor(
+				deliveryAddress, deliveryTime);
 		assertThat(result, is(false));
+		assertThat(restaurants, empty());
 	}
 
 	@Test
@@ -109,8 +117,11 @@ public class RestaurantRepositoryPersistenceTests implements
 
 		final boolean result = repository.isAvailableFor(deliveryAddress,
 				deliveryTime);
+		final List<Restaurant> restaurants = repository.findAvailableFor(
+				deliveryAddress, deliveryTime);
 
 		assertThat(result, is(false));
+		assertThat(restaurants, empty());
 	}
 
 	@Test
@@ -124,8 +135,11 @@ public class RestaurantRepositoryPersistenceTests implements
 
 		final boolean result = repository.isAvailableFor(deliveryAddress,
 				deliveryTime);
+		final List<Restaurant> restaurants = repository.findAvailableFor(
+				deliveryAddress, deliveryTime);
 
 		assertThat(result, is(false));
+		assertThat(restaurants, empty());
 	}
 
 	@Test

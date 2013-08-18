@@ -1,6 +1,6 @@
 package com.github.hippoom.food2go.interfaces.booking.web;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -14,8 +14,11 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +36,9 @@ import com.github.hippoom.food2go.domain.model.order.NoAvailableRestaurantExcept
 import com.github.hippoom.food2go.domain.model.order.PendingOrder;
 import com.github.hippoom.food2go.domain.model.order.PendingOrderFixture;
 import com.github.hippoom.food2go.domain.model.order.PendingOrderRepository;
+import com.github.hippoom.food2go.domain.model.restaurant.Restaurant;
+import com.github.hippoom.food2go.domain.model.restaurant.RestaurantFixture;
+import com.github.hippoom.food2go.domain.model.restaurant.RestaurantRepository;
 import com.github.hippoom.food2go.interfaces.booking.web.command.PlaceOrderCommand;
 import com.github.hippoom.food2go.test.IntegrationTests;
 
@@ -54,12 +60,20 @@ public class BookingMvcIntegrationTests implements IntegrationTests {
 	@Autowired
 	private PendingOrderRepository pendingOrderRepository;
 
+	@Autowired
+	private RestaurantRepository restaurantRepository;
+
 	@Before
 	public void setup() {
 		this.mockMvc = webAppContextSetup(this.wac).build();
 
-		reset(placeOrderService);// reset mock
-		reset(pendingOrderRepository);// reset mock
+	}
+
+	@After
+	public void resetMocks() {
+		reset(placeOrderService);
+		reset(pendingOrderRepository);
+		reset(restaurantRepository);
 	}
 
 	@Test
@@ -77,9 +91,17 @@ public class BookingMvcIntegrationTests implements IntegrationTests {
 	public void showUpdateRetaurantForm() throws Exception {
 
 		final PendingOrder pendingOrder = new PendingOrderFixture().build();
+		final List<Restaurant> restaurants = Arrays
+				.asList(new RestaurantFixture().build());
 
 		when(pendingOrderRepository.findOne(pendingOrder.getTrackingId()))
 				.thenReturn(pendingOrder);
+
+		when(
+				restaurantRepository.findAvailableFor(
+						pendingOrder.getDeliveryAddress(),
+						pendingOrder.getDeliveryTime()))
+				.thenReturn(restaurants);
 
 		mockMvc.perform(
 				get("/updateRestaurant/"
@@ -87,7 +109,8 @@ public class BookingMvcIntegrationTests implements IntegrationTests {
 				.andExpect(status().isOk())
 				.andExpect(
 						forwardedUrl("/WEB-INF/jsp/booking/updateRestaurant.jsp"))
-				.andExpect(model().attribute("pendingOrder", pendingOrder));
+				.andExpect(model().attribute("pendingOrder", pendingOrder))
+				.andExpect(model().attribute("restaurants", restaurants));
 
 	}
 

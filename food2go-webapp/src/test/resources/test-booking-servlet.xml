@@ -19,4 +19,9 @@
 			value="com.github.hippoom.food2go.domain.model.order.PendingOrderRepository" />
 	</bean>
 
+	<bean id="restaurantRepository" class="org.mockito.Mockito"
+		factory-method="mock">
+		<constructor-arg
+			value="com.github.hippoom.food2go.domain.model.restaurant.RestaurantRepository" />
+	</bean>
 </beans>

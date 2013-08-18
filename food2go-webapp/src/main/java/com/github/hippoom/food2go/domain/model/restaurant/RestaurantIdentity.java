@@ -11,5 +11,9 @@ import lombok.ToString;
 @EqualsAndHashCode
 @NoArgsConstructor
 public class RestaurantIdentity implements Serializable {
-	private String value;
+	private Long value;
+
+	public RestaurantIdentity(Long value) {
+		this.value = value;
+	}
 }
