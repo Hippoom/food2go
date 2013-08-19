@@ -8,7 +8,6 @@ import java.util.Locale;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -30,21 +29,42 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 
 	@Override
 	public boolean isAvailableFor(Address deliveryAddress, Date deliveryTime) {
-		// Use a native sql query because the sql is kind of complex
-		// I believe that native sql is easier to read in this situation and
-		// hence easier to maintain.
-		Calendar c = with(deliveryTime);
-		String sqlString = "select count(*) from t_f2g_restaurant r "
-				+ "where exists (select * from t_f2g_restaurant_srv_area sa "
-				+ "where (sa.street = ? or sa.street = ?) and r.id = sa.restaurant_id) "
-				+ "and exists (select * from t_f2g_restaurant_srv_time st "
-				+ "where st.day = ?  and (? between st.time_range_start and st.time_range_end) and r.id = st.restaurant_id) ";
-		Query query = entityManager.createNativeQuery(sqlString);
-		query.setParameter(1, deliveryAddress.getStreet1());
-		query.setParameter(2, deliveryAddress.getStreet2());
-		query.setParameter(3, getDayOfWeek(c));
-		query.setParameter(4, hhmmOf(deliveryTime));
-		return ((Number) query.getSingleResult()).longValue() > 0;
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
+		Root<Restaurant> restaurants = query.from(Restaurant.class);
+		query.select(criteriaBuilder.count(restaurants));
+
+		does(query, restaurants, deliveryAddress, deliveryTime, criteriaBuilder);
+
+		return entityManager.createQuery(query).getSingleResult() > 0;
+	}
+
+	@Override
+	public List<Restaurant> findAvailableFor(Address deliveryAddress,
+			Date deliveryTime) {
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Restaurant> query = criteriaBuilder
+				.createQuery(Restaurant.class);
+		Root<Restaurant> restaurants = query.from(Restaurant.class);
+
+		does(query, restaurants, deliveryAddress, deliveryTime, criteriaBuilder);
+
+		return entityManager.createQuery(query).getResultList();
+	}
+
+	private <T> void does(CriteriaQuery<T> query, Root<Restaurant> restaurants,
+			Address deliveryAddress, Date deliveryTime,
+			CriteriaBuilder criteriaBuilder) {
+		Subquery<Restaurant> serviceAreasFiltering = filterBy(criteriaBuilder,
+				query.subquery(Restaurant.class), restaurants, deliveryAddress);
+
+		Subquery<Restaurant> serviceTimeRangesFiltering = filterBy(
+				criteriaBuilder, query.subquery(Restaurant.class), restaurants,
+				deliveryTime);
+
+		query.where(criteriaBuilder.and(
+				criteriaBuilder.exists(serviceAreasFiltering),
+				criteriaBuilder.exists(serviceTimeRangesFiltering)));
 	}
 
 	private Calendar with(Date deliveryTime) {
@@ -61,31 +81,9 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 		return c.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.US);
 	}
 
-	@Override
-	public List<Restaurant> findAvailableFor(Address deliveryAddress,
-			Date deliveryTime) {
-		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<Restaurant> query = criteriaBuilder
-				.createQuery(Restaurant.class);
-		Root<Restaurant> restaurants = query.from(Restaurant.class);
-
-		Subquery<Restaurant> serviceAreasFiltering = filterBy(criteriaBuilder,
-				query, restaurants, deliveryAddress);
-
-		Subquery<Restaurant> serviceTimeRangesFiltering = filterBy(
-				criteriaBuilder, query, restaurants, deliveryTime);
-
-		query.where(criteriaBuilder.and(
-				criteriaBuilder.exists(serviceAreasFiltering),
-				criteriaBuilder.exists(serviceTimeRangesFiltering)));
-
-		return entityManager.createQuery(query).getResultList();
-	}
-
 	private Subquery<Restaurant> filterBy(CriteriaBuilder criteriaBuilder,
-			CriteriaQuery<Restaurant> query, Root<Restaurant> restaurants,
+			Subquery<Restaurant> subquery, Root<Restaurant> restaurants,
 			Date deliveryTime) {
-		Subquery<Restaurant> subquery = query.subquery(Restaurant.class);
 		ListJoin<Restaurant, TimeRange> serviceTimeRanges = subquery.correlate(
 				restaurants).joinList("serviceTimeRanges");
 
@@ -101,9 +99,8 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 	}
 
 	private Subquery<Restaurant> filterBy(CriteriaBuilder criteriaBuilder,
-			CriteriaQuery<Restaurant> query, Root<Restaurant> restaurants,
+			Subquery<Restaurant> subquery, Root<Restaurant> restaurants,
 			Address deliveryAddress) {
-		Subquery<Restaurant> subquery = query.subquery(Restaurant.class);
 		ListJoin<Restaurant, String> serviceAreas = subquery.correlate(
 				restaurants).joinList("serviceAreas");
 		subquery.where(criteriaBuilder.or(

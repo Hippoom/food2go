@@ -9,5 +9,9 @@
 </head>
 <body>
 	<h1>${pendingOrder.trackingId}</h1>
+	<h1>Available restaurants:</h1>
+	<c:forEach var="restaurant" items="${restaurants}">
+		${restaurant.name}
+	</c:forEach>
 </body>
 </html>

@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -25,9 +26,11 @@ import lombok.ToString;
 @Entity
 @Table(name = "t_f2g_restaurant", uniqueConstraints = @UniqueConstraint(columnNames = { "NAME" }))
 public class Restaurant {
+	@Getter
 	@EmbeddedId
 	@AttributeOverrides({ @AttributeOverride(name = "value", column = @Column(name = "ID")) })
 	private RestaurantIdentity id;
+	@Getter
 	@Column(name = "name")
 	private String name;
 	@ElementCollection

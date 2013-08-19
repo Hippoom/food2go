@@ -51,10 +51,18 @@ public class RestaurantRepositoryPersistenceTests implements
 		final Address deliveryAddress = aStreet1MatchedAddress();
 		final Date deliveryTime = anAvailableDeliveryTime();
 
-		final boolean result = repository.isAvailableFor(deliveryAddress,
+		final boolean available = repository.isAvailableFor(deliveryAddress,
 				deliveryTime);
+		final List<Restaurant> restaurants = repository.findAvailableFor(
+				deliveryAddress, deliveryTime);
 
-		assertThat(result, is(true));
+		thereShouldBe(available, restaurants);
+	}
+
+	private void thereShouldBe(final boolean available,
+			final List<Restaurant> restaurants) {
+		assertThat(available, is(true));
+		assertThat(restaurants.size(), equalTo(1));
 	}
 
 	@Test
@@ -65,10 +73,12 @@ public class RestaurantRepositoryPersistenceTests implements
 		final Address deliveryAddress = aStreet2MatchedAddress();
 		final Date deliveryTime = anAvailableDeliveryTime();
 
-		final boolean result = repository.isAvailableFor(deliveryAddress,
+		final boolean available = repository.isAvailableFor(deliveryAddress,
 				deliveryTime);
+		final List<Restaurant> restaurants = repository.findAvailableFor(
+				deliveryAddress, deliveryTime);
 
-		assertThat(result, is(true));
+		thereShouldBe(available, restaurants);
 	}
 
 	@Test
@@ -80,14 +90,12 @@ public class RestaurantRepositoryPersistenceTests implements
 		final Address deliveryAddress = anUnavailableAddress();
 		final Date deliveryTime = anAvailableDeliveryTime();
 
-		final boolean result = repository.isAvailableFor(deliveryAddress,
+		final boolean available = repository.isAvailableFor(deliveryAddress,
 				deliveryTime);
 		final List<Restaurant> restaurants = repository.findAvailableFor(
 				deliveryAddress, deliveryTime);
 
-		assertThat(result, is(false));
-		System.out.println(restaurants);
-		assertThat(restaurants, empty());
+		thereShouldBeNo(available, restaurants);
 	}
 
 	@Test
@@ -98,11 +106,16 @@ public class RestaurantRepositoryPersistenceTests implements
 		final Address deliveryAddress = anAvailableDeliveryAddress();
 		final Date deliveryTime = anUnavailableDeliveryDate();
 
-		final boolean result = repository.isAvailableFor(deliveryAddress,
+		final boolean available = repository.isAvailableFor(deliveryAddress,
 				deliveryTime);
 		final List<Restaurant> restaurants = repository.findAvailableFor(
 				deliveryAddress, deliveryTime);
-		assertThat(result, is(false));
+		thereShouldBeNo(available, restaurants);
+	}
+
+	private void thereShouldBeNo(final boolean available,
+			final List<Restaurant> restaurants) {
+		assertThat(available, is(false));
 		assertThat(restaurants, empty());
 	}
 
@@ -115,13 +128,12 @@ public class RestaurantRepositoryPersistenceTests implements
 		final Address deliveryAddress = anAvailableDeliveryAddress();
 		final Date deliveryTime = aTooEarlyDeliveryTimeRange();
 
-		final boolean result = repository.isAvailableFor(deliveryAddress,
+		final boolean available = repository.isAvailableFor(deliveryAddress,
 				deliveryTime);
 		final List<Restaurant> restaurants = repository.findAvailableFor(
 				deliveryAddress, deliveryTime);
 
-		assertThat(result, is(false));
-		assertThat(restaurants, empty());
+		thereShouldBeNo(available, restaurants);
 	}
 
 	@Test
@@ -133,13 +145,12 @@ public class RestaurantRepositoryPersistenceTests implements
 		final Address deliveryAddress = anAvailableDeliveryAddress();
 		final Date deliveryTime = aTooLateDeliveryTimeRange();
 
-		final boolean result = repository.isAvailableFor(deliveryAddress,
+		final boolean available = repository.isAvailableFor(deliveryAddress,
 				deliveryTime);
 		final List<Restaurant> restaurants = repository.findAvailableFor(
 				deliveryAddress, deliveryTime);
 
-		assertThat(result, is(false));
-		assertThat(restaurants, empty());
+		thereShouldBeNo(available, restaurants);
 	}
 
 	@Test
@@ -151,10 +162,12 @@ public class RestaurantRepositoryPersistenceTests implements
 		final Address deliveryAddress = anAvailableDeliveryAddress();
 		final Date deliveryTime = aDeliveryTimeRangeMatchedLeftInterval();
 
-		final boolean result = repository.isAvailableFor(deliveryAddress,
+		final boolean available = repository.isAvailableFor(deliveryAddress,
 				deliveryTime);
+		final List<Restaurant> restaurants = repository.findAvailableFor(
+				deliveryAddress, deliveryTime);
 
-		assertThat(result, is(true));
+		thereShouldBe(available, restaurants);
 	}
 
 	@Test
@@ -166,10 +179,11 @@ public class RestaurantRepositoryPersistenceTests implements
 		final Address deliveryAddress = anAvailableDeliveryAddress();
 		final Date deliveryTime = aDeliveryTimeRangeMatchedRightInterval();
 
-		final boolean result = repository.isAvailableFor(deliveryAddress,
+		final boolean available = repository.isAvailableFor(deliveryAddress,
 				deliveryTime);
-
-		assertThat(result, is(true));
+		final List<Restaurant> restaurants = repository.findAvailableFor(
+				deliveryAddress, deliveryTime);
+		thereShouldBe(available, restaurants);
 	}
 
 	private Address anUnavailableAddress() {

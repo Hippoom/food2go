@@ -83,8 +83,7 @@ public class PlaceOrderSteps implements ApplicationContextAware {
 
 	@Then("^all available restaurants are listed$")
 	public void all_available_restaurants_are_listed() throws Throwable {
-		// Express the Regexp above with the code you wish you had
-		throw new PendingException();
+		assertThat(content.asString(), containsString("Available restaurants:"));
 	}
 
 	@Given("^my delivery address is not in service area of any restaurant$")
