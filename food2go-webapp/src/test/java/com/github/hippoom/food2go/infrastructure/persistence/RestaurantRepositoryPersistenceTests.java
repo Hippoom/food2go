@@ -62,7 +62,9 @@ public class RestaurantRepositoryPersistenceTests implements
 	private void thereShouldBe(final boolean available,
 			final List<Restaurant> restaurants) {
 		assertThat(available, is(true));
-		assertThat(restaurants.size(), equalTo(1));
+		assertThat(restaurants.size(), equalTo(2));
+		assertThat(restaurants.get(0).getName(), lessThan(restaurants.get(1)
+				.getName()));
 	}
 
 	@Test

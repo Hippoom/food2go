@@ -10,6 +10,9 @@ persistence tests isAvalable
 2 Haidilao Hotpot  S1                                 Sat 09:00 20:00
                    S2
                    S3                                 Sun 09:00 20:00
+4 Huangshan rice   S1                                 Sat 09:00 20:00
+                   S2
+                   S3                                 Sun 09:00 20:00
                    
 acceptance tests place order
 

@@ -32,11 +32,12 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
 		Root<Restaurant> restaurants = query.from(Restaurant.class);
-		query.select(criteriaBuilder.count(restaurants));
 
 		does(query, restaurants, deliveryAddress, deliveryTime, criteriaBuilder);
 
-		return entityManager.createQuery(query).getSingleResult() > 0;
+		return entityManager.createQuery(
+				query.select(criteriaBuilder.count(restaurants)))
+				.getSingleResult() > 0;
 	}
 
 	@Override
@@ -49,7 +50,9 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 
 		does(query, restaurants, deliveryAddress, deliveryTime, criteriaBuilder);
 
-		return entityManager.createQuery(query).getResultList();
+		return entityManager.createQuery(
+				query.orderBy(criteriaBuilder.asc(restaurants.get("name"))))
+				.getResultList();
 	}
 
 	private <T> void does(CriteriaQuery<T> query, Root<Restaurant> restaurants,
