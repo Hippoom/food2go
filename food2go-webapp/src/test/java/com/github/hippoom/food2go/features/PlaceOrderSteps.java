@@ -148,4 +148,15 @@ public class PlaceOrderSteps implements ApplicationContextAware {
 		return applicationContext.getResource(file).getFile();
 	}
 
+	@When("^I pick desired menu items from a restaurant$")
+	public void I_pick_desired_menu_items_from_a_restaurant() throws Throwable {
+		// Express the Regexp above with the code you wish you had
+		throw new PendingException();
+	}
+
+	@Then("^order items are updated$")
+	public void order_items_are_updated() throws Throwable {
+		// Express the Regexp above with the code you wish you had
+		throw new PendingException();
+	}
 }
