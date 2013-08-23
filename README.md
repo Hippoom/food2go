@@ -5,11 +5,19 @@ food2go
 
 ## deploy-skeleton-mvn
 
-
-**Summary**: The first step is to develop a very small but deployable application. Some infrastructure could be set up in this step such as scm repository.  
+**Summary**: The first step is to develop a very small but deployable application.  
 **Stories**: <a href="https://github.com/Hippoom/food2go/blob/deploy-skeleton-mvn/food2go-webapp/src/test/stories/deploy.feature">Server startup</a>.  
-**Description**: 
-    This process should be quick and straightforward. Access the welcome page(the only page needed so far) to check whether the application is deployed, <a href="https://github.com/Hippoom/food2go/blob/deploy-skeleton-mvn/food2go-webapp/src/test/java/com/github/hippoom/food2go/at/DeploySteps.java">see this.</a>.  
+**Description**: This process should be quick and straightforward. Access the welcome page(the only page needed so far) to check whether the application is deployed, <a href="https://github.com/Hippoom/food2go/blob/deploy-skeleton-mvn/food2go-webapp/src/test/java/com/github/hippoom/food2go/at/DeploySteps.java">see this.</a>.Some infrastructure could be set up in this step such as scm repository.  
+
+## place-order
+
+**Summary**: The first scenario in the first feature.
+**Stories**: <a href="https://github.com/Hippoom/food2go/blob/place-order/food2go-webapp/src/test/stories/features/place_order.feature">Place order</a>.  
+**Description**: The logic is pretty simple(if there is any), just create an order and store, 
+[no validations for business rule at all](https://github.com/Hippoom/food2go/blob/place-order/food2go-webapp/src/main/java/com/github/hippoom/food2go/application/impl/TransactionalPlaceOrderServiceImpl.java). 
+The most important progress is a simple domain model and database being set up. 
+I used to write acceptance tests via Selenium Web Driver, it can cover view logic but it is also time consuming. 
+So this time I would like to try a new [approach](https://github.com/Hippoom/food2go/blob/place-order/food2go-webapp/src/test/java/com/github/hippoom/food2go/features/PlaceOrderSteps.java).
 
 
 # Q&A
