@@ -1,12 +1,16 @@
 food2go
 =======
 
+**Branches**
+
+
+
 **Q&A**
 
 <pre>
 
 Q: What does @Getter/@Setter/@ToString/@EqualsAndHashCode do? Why I have compile error on all setter and getter methods?
-A: I use lombok to generate code. You need to install lombok plugin to your ide, refer to [this](http://projectlombok.org/features/index.html) for more detail.
+A: I use lombok to generate code. You need to install lombok plugin on your ide, refer to <a href="http://projectlombok.org/features/index.html">this</a> for more detail.
 
 Q: How can I setup a hsqldb instance?
 A: Scenario:acceptance test/user acceptance tests
