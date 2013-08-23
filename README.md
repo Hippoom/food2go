@@ -3,7 +3,16 @@ food2go
 
 **Branches**
 
+1.deploy-skeleton-mvn
 
+<pre>
+Summary: The first step is to develop a very small but deployable application. 
+Some infrastructure could be set up in this step such as scm repository.
+Stories: <a href="https://github.com/Hippoom/food2go/blob/deploy-skeleton-mvn/food2go-webapp/src/test/stories/deploy.feature">Server startup</a>
+Description: 
+    This process should be quick and straightforward. 
+    Access the welcome page(the only page needed so far) to check whether the application is deployed, <a href="https://github.com/Hippoom/food2go/blob/deploy-skeleton-mvn/food2go-webapp/src/test/java/com/github/hippoom/food2go/at/DeploySteps.java">see this.</a>
+</pre>
 
 **Q&A**
 
