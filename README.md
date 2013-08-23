@@ -11,7 +11,7 @@ food2go
 
 ## place-order
 
-**Summary**: The first scenario in the first feature.
+**Summary**: The first scenario in the first feature.  
 **Stories**: <a href="https://github.com/Hippoom/food2go/blob/place-order/food2go-webapp/src/test/stories/features/place_order.feature">Place order</a>.  
 **Description**: The logic is pretty simple(if there is any), just create an order and store, 
 [no validations for business rule at all](https://github.com/Hippoom/food2go/blob/place-order/food2go-webapp/src/main/java/com/github/hippoom/food2go/application/impl/TransactionalPlaceOrderServiceImpl.java). 
