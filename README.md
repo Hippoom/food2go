@@ -22,12 +22,17 @@ So this time I would like to try a new [approach](https://github.com/Hippoom/foo
 ## place-order-alternative-path
 
 **Summary**: Alternative path of place order. Available restaurants checking is introduced in this branch.  
-**Stories**: <a href="https://github.com/Hippoom/food2go/blob/cb9589c430c5782970d2e75d4682a11754c6d0cd/food2go-webapp/src/test/stories/features/place_order.feature">Place order</a>.  
+**Stories**: <a href="https://github.com/Hippoom/food2go/blob/place-order-alternative-path/food2go-webapp/src/test/stories/features/place_order.feature">Place order</a>.  
 **Description**: [An aggregate factory](https://github.com/Hippoom/food2go/blob/place-order-alternative-path/food2go-webapp/src/main/java/com/github/hippoom/food2go/domain/model/order/PendingOrderFactory.java) 
 is introduced to prevent domain logic from leaking into [application layer](https://github.com/Hippoom/food2go/blob/place-order-alternative-path/food2go-webapp/src/main/java/com/github/hippoom/food2go/application/impl/TransactionalPlaceOrderServiceImpl.java).
 There is an error this branch, I misunderstood how to [match](https://github.com/Hippoom/food2go/blob/place-order-alternative-path/food2go-webapp/src/main/java/com/github/hippoom/food2go/infrastructure/persistence/jpa/RestaurantRepositoryImpl.java) delivery address with service areas of restaurant,
 Apparently, it's not feasible to use street for matching available restuarants in real business. 
 This kind of problems often occour in read projects, so it happens to be a good example, I'll fix it in another branch later.
+
+## a-le-carte
+
+**Summary**: Following step of place order. Restaurant and food selections are introduced in this branch.  
+**Stories**: <a href="https://github.com/Hippoom/food2go/blob/a-le-carte/food2go-webapp/src/test/stories/features/place_order.feature">Place order</a>.  
 
 # Q&A
 
