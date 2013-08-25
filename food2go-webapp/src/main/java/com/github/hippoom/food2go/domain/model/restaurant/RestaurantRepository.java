@@ -11,4 +11,6 @@ public interface RestaurantRepository {
 
 	List<Restaurant> findAvailableFor(Address deliveryAddress, Date deliveryTime);
 
+	Restaurant findOne(RestaurantIdentity restaurantIdentity);
+
 }

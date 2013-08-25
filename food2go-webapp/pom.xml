@@ -34,6 +34,13 @@
 			<version>1.2.16</version>
 		</dependency>
 
+		<!-- proxy -->
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib-nodep</artifactId>
+			<version>2.2</version>
+		</dependency>
+
 
 		<!-- mvc -->
 		<dependency>
@@ -53,7 +60,29 @@
 			<version>1.2</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
+		<!-- json transformer -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.2.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
+			<version>0.8.1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- object mapping -->
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>0.6.1</version>
+		</dependency>
+
+
 		<!-- validation -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -106,12 +135,6 @@
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>${hsqldb.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.modelmapper</groupId>
-			<artifactId>modelmapper</artifactId>
-			<version>0.5.6</version>
-			<scope>test</scope>
 		</dependency>
 
 		<!-- validation -->
@@ -176,6 +199,12 @@
 			<artifactId>jmock-legacy</artifactId>
 			<version>${jmock.version}</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>cglib-nodep</artifactId>
+					<groupId>cglib</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>

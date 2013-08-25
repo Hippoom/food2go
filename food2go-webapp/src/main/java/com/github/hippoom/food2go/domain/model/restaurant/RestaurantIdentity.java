@@ -18,4 +18,8 @@ public class RestaurantIdentity implements Serializable {
 	public RestaurantIdentity(Long value) {
 		this.value = value;
 	}
+
+	public RestaurantIdentity(int value) {
+		this(new Long(value));
+	}
 }

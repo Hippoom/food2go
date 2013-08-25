@@ -11,6 +11,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -33,20 +34,37 @@ public class Restaurant {
 	@Getter
 	@Column(name = "name")
 	private String name;
+	@Getter
 	@ElementCollection
-	@CollectionTable(name = "t_f2g_restaurant_srv_area", joinColumns = @JoinColumn(name = "RESTAURANT_ID"))
+	@CollectionTable(name = "t_f2g_restaurant_srv_area", joinColumns = @JoinColumn(name = "RESTAURANT_ID"), uniqueConstraints = @UniqueConstraint(columnNames = {
+			"RESTAURANT_ID", "STREET" }))
 	@Column(name = "STREET")
 	private List<String> serviceAreas = new ArrayList<String>();
+	@Getter
 	@ElementCollection
-	@CollectionTable(name = "t_f2g_restaurant_srv_time", joinColumns = @JoinColumn(name = "RESTAURANT_ID"))
+	@CollectionTable(name = "t_f2g_restaurant_srv_time", joinColumns = @JoinColumn(name = "RESTAURANT_ID"), uniqueConstraints = @UniqueConstraint(columnNames = {
+			"RESTAURANT_ID", "DAY" }))
 	@AttributeOverrides({
 			@AttributeOverride(name = "day", column = @Column(name = "DAY")),
 			@AttributeOverride(name = "start", column = @Column(name = "TIME_RANGE_START")),
 			@AttributeOverride(name = "end", column = @Column(name = "TIME_RANGE_END")) })
 	private List<TimeRange> serviceTimeRanges = new ArrayList<TimeRange>();
+	@Getter
+	@ElementCollection
+	@AttributeOverrides({
+			@AttributeOverride(name = "name", column = @Column(name = "NAME")),
+			@AttributeOverride(name = "price", column = @Column(name = "PRICE")) })
+	@CollectionTable(name = "t_f2g_restaurant_menu_item", joinColumns = @JoinColumn(name = "RESTAURANT_ID"), uniqueConstraints = @UniqueConstraint(columnNames = {
+			"RESTAURANT_ID", "NAME" }))
+	@OrderBy("name")
+	private List<MenuItem> menuItems = new ArrayList<MenuItem>();
 
 	public Restaurant(RestaurantIdentity id, String name) {
 		this.id = id;
 		this.name = name;
+	}
+
+	public void update(List<MenuItem> menuItems) {
+		this.menuItems = menuItems;
 	}
 }

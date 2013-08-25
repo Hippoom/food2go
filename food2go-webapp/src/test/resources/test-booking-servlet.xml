@@ -24,4 +24,7 @@
 		<constructor-arg
 			value="com.github.hippoom.food2go.domain.model.restaurant.RestaurantRepository" />
 	</bean>
+
+	<bean id="restaurantDetacher"
+		class="com.github.hippoom.food2go.interfaces.booking.facade.internal.transformer.RestaurantDetacherStub" />
 </beans>

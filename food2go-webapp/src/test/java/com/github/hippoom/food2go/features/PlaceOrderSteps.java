@@ -4,6 +4,7 @@ import static com.github.hippoom.test.dbunit.DatabaseOperationBuilder.flatXml;
 import static org.dbunit.operation.DatabaseOperation.DELETE_ALL;
 import static org.dbunit.operation.DatabaseOperation.INSERT;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
@@ -134,10 +135,10 @@ public class PlaceOrderSteps implements ApplicationContextAware {
 	}
 
 	private void refreshAvailableRestaurants() throws Exception {
-		// It's convenient to use manipulate the database directly, but it is
+		// It's convenient to manipulate the database directly, but it is
 		// also vulnerable if the schema changes.
 		// But I haven't develop restaurant admin feature yet, so it's the only
-		// option for now
+		// option in the meantime
 		String file = "classpath:t_f2g_restaurant_place_order.xml";
 		new DatabaseOperationBuilder(dataSource)
 				.to(DELETE_ALL, flatXml(file(file)))
@@ -150,7 +151,9 @@ public class PlaceOrderSteps implements ApplicationContextAware {
 
 	@When("^I pick desired menu items from a restaurant$")
 	public void I_pick_desired_menu_items_from_a_restaurant() throws Throwable {
-		// Express the Regexp above with the code you wish you had
+		assertThat(Request.Get("http://localhost:9999/food2go/booking/restaurant/3")
+						.execute().returnContent().asString()
+						.contains("menuItems"), is(true));
 		throw new PendingException();
 	}
 

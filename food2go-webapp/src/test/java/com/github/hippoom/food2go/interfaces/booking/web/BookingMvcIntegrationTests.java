@@ -5,8 +5,10 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,13 +40,16 @@ import com.github.hippoom.food2go.domain.model.order.PendingOrderFixture;
 import com.github.hippoom.food2go.domain.model.order.PendingOrderRepository;
 import com.github.hippoom.food2go.domain.model.restaurant.Restaurant;
 import com.github.hippoom.food2go.domain.model.restaurant.RestaurantFixture;
+import com.github.hippoom.food2go.domain.model.restaurant.RestaurantIdentity;
 import com.github.hippoom.food2go.domain.model.restaurant.RestaurantRepository;
+import com.github.hippoom.food2go.interfaces.booking.facade.internal.transformer.RestaurantDtoTransformer;
 import com.github.hippoom.food2go.interfaces.booking.web.command.PlaceOrderCommand;
 import com.github.hippoom.food2go.test.IntegrationTests;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
 		"file:src/main/webapp/WEB-INF/booking-servlet.xml",
+		"classpath:context-interfaces-facade.xml",
 		"classpath:test-booking-servlet.xml" })
 @WebAppConfiguration
 public class BookingMvcIntegrationTests implements IntegrationTests {
@@ -62,6 +67,9 @@ public class BookingMvcIntegrationTests implements IntegrationTests {
 
 	@Autowired
 	private RestaurantRepository restaurantRepository;
+
+	@Autowired
+	private RestaurantDtoTransformer restaurantDtoTransformer;
 
 	@Before
 	public void setup() {
@@ -179,6 +187,30 @@ public class BookingMvcIntegrationTests implements IntegrationTests {
 						.param("deliveryTime", deliveryTime))
 				.andExpect(redirectedUrl("/booking/placeOrder"))
 				.andExpect(flash().attributeExists("command", "bindingResult"));
+
+	}
+
+	@Test
+	public void displayMenuItemsGivenRestaurantIdentity() throws Exception {
+
+		RestaurantIdentity restaurantIdentity = new RestaurantIdentity(1);
+		Restaurant restaurant = new RestaurantFixture(restaurantIdentity)
+				.build();
+
+		when(restaurantRepository.findOne(restaurantIdentity)).thenReturn(
+				restaurant);
+
+		mockMvc.perform(get("/restaurant/1"))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("name").value(restaurant.getName()))
+				.andExpect(
+						jsonPath("menuItems.[0].name").value(
+								restaurant.getMenuItems().get(0).getName()))
+				.andExpect(
+						jsonPath("menuItems.[0].price").value(
+								String.valueOf(restaurant.getMenuItems().get(0)
+										.getPrice())));
 
 	}
 

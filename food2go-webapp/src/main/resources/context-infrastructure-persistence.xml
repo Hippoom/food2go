@@ -50,6 +50,10 @@
 	<bean id="restaurantRepository"
 		class="com.github.hippoom.food2go.infrastructure.persistence.jpa.RestaurantRepositoryImpl">
 	</bean>
+	
+	<bean id="restaurantDetacher"
+		class="com.github.hippoom.food2go.infrastructure.persistence.jpa.RestaurantDetacherImpl">
+	</bean>
 
 	<jpa:repositories base-package="com.github.hippoom.food2go.domain.model" />
 </beans>

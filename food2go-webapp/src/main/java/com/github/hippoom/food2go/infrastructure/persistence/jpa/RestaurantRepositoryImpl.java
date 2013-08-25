@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.github.hippoom.food2go.domain.model.order.Address;
 import com.github.hippoom.food2go.domain.model.restaurant.Restaurant;
+import com.github.hippoom.food2go.domain.model.restaurant.RestaurantIdentity;
 import com.github.hippoom.food2go.domain.model.restaurant.RestaurantRepository;
 import com.github.hippoom.food2go.domain.model.restaurant.TimeRange;
 
@@ -112,5 +113,10 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 				criteriaBuilder.equal(serviceAreas,
 						deliveryAddress.getStreet2())));
 		return subquery;
+	}
+
+	@Override
+	public Restaurant findOne(RestaurantIdentity identity) {
+		return entityManager.find(Restaurant.class, identity);
 	}
 }

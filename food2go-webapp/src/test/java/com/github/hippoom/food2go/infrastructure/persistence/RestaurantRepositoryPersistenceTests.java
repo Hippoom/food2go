@@ -3,7 +3,10 @@ package com.github.hippoom.food2go.infrastructure.persistence;
 import static com.github.hippoom.test.dbunit.DatabaseOperationBuilder.flatXml;
 import static org.dbunit.operation.DatabaseOperation.DELETE_ALL;
 import static org.dbunit.operation.DatabaseOperation.INSERT;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
@@ -24,10 +27,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.hippoom.food2go.domain.model.order.Address;
+import com.github.hippoom.food2go.domain.model.restaurant.MenuItem;
 import com.github.hippoom.food2go.domain.model.restaurant.Restaurant;
+import com.github.hippoom.food2go.domain.model.restaurant.RestaurantIdentity;
 import com.github.hippoom.food2go.domain.model.restaurant.RestaurantRepository;
+import com.github.hippoom.food2go.domain.model.restaurant.TimeRange;
 import com.github.hippoom.food2go.test.PersistenceTests;
 import com.github.hippoom.test.dbunit.DatabaseOperationBuilder;
 
@@ -186,6 +193,39 @@ public class RestaurantRepositoryPersistenceTests implements
 		final List<Restaurant> restaurants = repository.findAvailableFor(
 				deliveryAddress, deliveryTime);
 		thereShouldBe(available, restaurants);
+	}
+
+	/**
+	 * <pre>
+	 * respository.store() has not been added yet.
+	 * I have to insert data using dbunit, this makes duplicate data in both java and xml
+	 * 
+	 * 
+	 * </pre>
+	 */
+	@Transactional(readOnly = true)
+	@Test
+	public void findOne() throws Exception {
+
+		refreshAvailableRestaurants();
+
+		Restaurant restaurant = repository.findOne(new RestaurantIdentity(2));
+		assertThat(restaurant.getName(), equalTo("Haidilao Hotpot"));
+		assertThat(restaurant.getServiceAreas().size(), equalTo(3));
+		assertThat(restaurant.getServiceAreas().get(0), equalTo("S1"));
+		assertThat(restaurant.getServiceAreas().get(1), equalTo("S2"));
+		assertThat(restaurant.getServiceAreas().get(2), equalTo("S3"));
+		assertThat(restaurant.getServiceTimeRanges().size(), equalTo(2));
+		assertThat(restaurant.getServiceTimeRanges().get(0),
+				equalTo(new TimeRange("Sat", "09:00", "20:00")));
+		assertThat(restaurant.getServiceTimeRanges().get(1),
+				equalTo(new TimeRange("Sun", "09:00", "20:00")));
+		assertThat(restaurant.getMenuItems().size(), equalTo(2));
+		assertThat(restaurant.getMenuItems().get(0), equalTo(new MenuItem(
+				"Fresh cabbage", 3.00)));
+		assertThat(restaurant.getMenuItems().get(1), equalTo(new MenuItem(
+				"Grilled beef", 20.00)));
+
 	}
 
 	private Address anUnavailableAddress() {

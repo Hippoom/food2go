@@ -5,9 +5,11 @@
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<import resource="classpath:context-interfaces-facade.xml" />
-	<import resource="classpath:context-application.xml" />
-	<import resource="classpath:context-domain.xml" />
-	<import resource="classpath:context-infrastructure-persistence.xml" />
+
+
+	<bean id="restaurantDtoTransformer"
+		class="com.github.hippoom.food2go.interfaces.booking.facade.internal.transformer.RestaurantDtoTransformer">
+		<property name="detacher" ref="restaurantDetacher" />
+	</bean>
 
 </beans>

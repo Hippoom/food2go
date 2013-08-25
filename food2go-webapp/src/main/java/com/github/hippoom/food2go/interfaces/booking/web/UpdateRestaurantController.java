@@ -7,11 +7,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.hippoom.food2go.domain.model.order.PendingOrder;
 import com.github.hippoom.food2go.domain.model.order.PendingOrderRepository;
 import com.github.hippoom.food2go.domain.model.order.TrackingId;
+import com.github.hippoom.food2go.domain.model.restaurant.Restaurant;
+import com.github.hippoom.food2go.domain.model.restaurant.RestaurantIdentity;
 import com.github.hippoom.food2go.domain.model.restaurant.RestaurantRepository;
+import com.github.hippoom.food2go.interfaces.booking.facade.dto.RestaurantDto;
+import com.github.hippoom.food2go.interfaces.booking.facade.internal.transformer.RestaurantDtoTransformer;
 
 @Controller
 public class UpdateRestaurantController {
@@ -19,6 +24,8 @@ public class UpdateRestaurantController {
 	private PendingOrderRepository pendingOrderRepository;
 	@Setter
 	private RestaurantRepository restaurantRepository;
+	@Setter
+	private RestaurantDtoTransformer restaurantDtoTransformer;
 
 	@RequestMapping(value = "/updateRestaurant/{trackingId}", method = RequestMethod.GET)
 	public String updateRestaurant(@PathVariable Long trackingId, Model model) {
@@ -30,5 +37,13 @@ public class UpdateRestaurantController {
 				restaurantRepository.findAvailableFor(
 						order.getDeliveryAddress(), order.getDeliveryTime()));
 		return "updateRestaurant";
+	}
+
+	@RequestMapping(value = "/restaurant/{restaurantId}", method = RequestMethod.GET)
+	public @ResponseBody
+	RestaurantDto displayRestaurant(@PathVariable Long restaurantId, Model model) {
+		Restaurant restaurant = restaurantRepository
+				.findOne(new RestaurantIdentity(restaurantId));
+		return restaurantDtoTransformer.from(restaurant);
 	}
 }

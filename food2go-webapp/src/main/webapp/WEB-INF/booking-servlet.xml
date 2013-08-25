@@ -26,6 +26,7 @@
 		class="com.github.hippoom.food2go.interfaces.booking.web.UpdateRestaurantController">
 		<property name="pendingOrderRepository" ref="pendingOrderRepository" />
 		<property name="restaurantRepository" ref="restaurantRepository" />
+		<property name="restaurantDtoTransformer" ref="restaurantDtoTransformer" />
 	</bean>
 
 </beans>
