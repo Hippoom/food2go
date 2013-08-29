@@ -36,14 +36,12 @@ public class Restaurant {
 	private String name;
 	@Getter
 	@ElementCollection
-	@CollectionTable(name = "t_f2g_restaurant_srv_area", joinColumns = @JoinColumn(name = "RESTAURANT_ID"), uniqueConstraints = @UniqueConstraint(columnNames = {
-			"RESTAURANT_ID", "STREET" }))
+	@CollectionTable(name = "t_f2g_restaurant_srv_area", joinColumns = @JoinColumn(name = "RESTAURANT_ID"))
 	@Column(name = "STREET")
 	private List<String> serviceAreas = new ArrayList<String>();
 	@Getter
 	@ElementCollection
-	@CollectionTable(name = "t_f2g_restaurant_srv_time", joinColumns = @JoinColumn(name = "RESTAURANT_ID"), uniqueConstraints = @UniqueConstraint(columnNames = {
-			"RESTAURANT_ID", "DAY" }))
+	@CollectionTable(name = "t_f2g_restaurant_srv_time", joinColumns = @JoinColumn(name = "RESTAURANT_ID"))
 	@AttributeOverrides({
 			@AttributeOverride(name = "day", column = @Column(name = "DAY")),
 			@AttributeOverride(name = "start", column = @Column(name = "TIME_RANGE_START")),
@@ -54,8 +52,7 @@ public class Restaurant {
 	@AttributeOverrides({
 			@AttributeOverride(name = "name", column = @Column(name = "NAME")),
 			@AttributeOverride(name = "price", column = @Column(name = "PRICE")) })
-	@CollectionTable(name = "t_f2g_restaurant_menu_item", joinColumns = @JoinColumn(name = "RESTAURANT_ID"), uniqueConstraints = @UniqueConstraint(columnNames = {
-			"RESTAURANT_ID", "NAME" }))
+	@CollectionTable(name = "t_f2g_restaurant_menu_item", joinColumns = @JoinColumn(name = "RESTAURANT_ID"))
 	@OrderBy("name")
 	private List<MenuItem> menuItems = new ArrayList<MenuItem>();
 

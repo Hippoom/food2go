@@ -15,6 +15,7 @@ import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ReplacementDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.CloseConnectionOperation;
@@ -47,9 +48,12 @@ public class DatabaseOperationBuilder {
 		}
 	}
 
-	public static FlatXmlDataSet flatXml(File file)
+	public static IDataSet flatXml(File file)
 			throws MalformedURLException, DataSetException {
-		return new FlatXmlDataSetBuilder().build(file);
+		ReplacementDataSet dataSet = new ReplacementDataSet(
+				new FlatXmlDataSetBuilder().build(file));
+		dataSet.addReplacementObject("[NULL]", null);
+		return dataSet;
 	}
 
 	private class DatabaseOperationAction {
