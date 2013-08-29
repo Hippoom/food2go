@@ -18,7 +18,11 @@ public class PendingOrderRepositoryImpl implements PendingOrderRepositoryCustom 
 	@Transactional
 	@Override
 	public void store(PendingOrder pendingOrder) {
-		entityManager.persist(pendingOrder);
+		//if (pendingOrder.isPersisted()) {
+		//	pendingOrder = entityManager.merge(pendingOrder);
+		//} else {
+			entityManager.persist(pendingOrder);
+		//}
 	}
 
 	@Override

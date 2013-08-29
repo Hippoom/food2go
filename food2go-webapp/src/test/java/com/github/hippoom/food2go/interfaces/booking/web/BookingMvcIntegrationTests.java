@@ -2,6 +2,7 @@ package com.github.hippoom.food2go.interfaces.booking.web;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -35,14 +36,16 @@ import com.github.hippoom.food2go.application.PlaceOrderService;
 import com.github.hippoom.food2go.domain.model.order.Address;
 import com.github.hippoom.food2go.domain.model.order.AddressFixture;
 import com.github.hippoom.food2go.domain.model.order.NoAvailableRestaurantException;
+import com.github.hippoom.food2go.domain.model.order.OrderLine;
 import com.github.hippoom.food2go.domain.model.order.PendingOrder;
 import com.github.hippoom.food2go.domain.model.order.PendingOrderFixture;
 import com.github.hippoom.food2go.domain.model.order.PendingOrderRepository;
+import com.github.hippoom.food2go.domain.model.order.TrackingId;
+import com.github.hippoom.food2go.domain.model.restaurant.MenuItem;
 import com.github.hippoom.food2go.domain.model.restaurant.Restaurant;
 import com.github.hippoom.food2go.domain.model.restaurant.RestaurantFixture;
 import com.github.hippoom.food2go.domain.model.restaurant.RestaurantIdentity;
 import com.github.hippoom.food2go.domain.model.restaurant.RestaurantRepository;
-import com.github.hippoom.food2go.interfaces.booking.facade.internal.transformer.RestaurantDtoTransformer;
 import com.github.hippoom.food2go.interfaces.booking.web.command.PlaceOrderCommand;
 import com.github.hippoom.food2go.test.IntegrationTests;
 
@@ -68,8 +71,6 @@ public class BookingMvcIntegrationTests implements IntegrationTests {
 	@Autowired
 	private RestaurantRepository restaurantRepository;
 
-	@Autowired
-	private RestaurantDtoTransformer restaurantDtoTransformer;
 
 	@Before
 	public void setup() {
@@ -212,6 +213,37 @@ public class BookingMvcIntegrationTests implements IntegrationTests {
 								String.valueOf(restaurant.getMenuItems().get(0)
 										.getPrice())));
 
+	}
+
+	@Test
+	public void redirectToPaymentViewAfterOrderLinesUpdated() throws Exception {
+
+		Restaurant restaurant = new RestaurantFixture().build();
+
+		MenuItem menuItem1 = restaurant.getMenuItems().get(0);
+		MenuItem menuItem2 = restaurant.getMenuItems().get(1);
+
+		mockMvc.perform(
+				post("/order/1/updateOrderLines")
+						.param("restaurantId",
+								String.valueOf(restaurant.getId().getValue()))
+						.param("orderLines[0].name", menuItem1.getName())
+						.param("orderLines[0].price",
+								String.valueOf(menuItem1.getPrice()))
+						.param("orderLines[0].quantity", "1")
+						.param("orderLines[1].name", menuItem2.getName())
+						.param("orderLines[1].price",
+								String.valueOf(menuItem2.getPrice()))
+						.param("orderLines[1].quantity", "2")).andDo(print())
+				.andExpect(redirectedUrl("/booking/order/1/payment"));
+
+		verify(placeOrderService).update(
+				new TrackingId(1L),
+				restaurant.getId(),
+				Arrays.asList(
+						new OrderLine(menuItem1.getName(),
+								menuItem1.getPrice(), 1), new OrderLine(
+								menuItem2.getName(), menuItem2.getPrice(), 2)));
 	}
 
 	private String twoHoursLater() {

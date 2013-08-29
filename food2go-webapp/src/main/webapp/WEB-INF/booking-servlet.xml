@@ -27,6 +27,7 @@
 		<property name="pendingOrderRepository" ref="pendingOrderRepository" />
 		<property name="restaurantRepository" ref="restaurantRepository" />
 		<property name="restaurantDtoTransformer" ref="restaurantDtoTransformer" />
+		<property name="placeOrderService" ref="placeOrderService" />
 	</bean>
 
 </beans>

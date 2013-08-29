@@ -23,4 +23,10 @@ public class TrackingId implements Serializable {
 	public TrackingId(Long value) {
 		this.value = value;
 	}
+
+	/**
+	 * for frameworks only
+	 */
+	public TrackingId() {
+	}
 }
