@@ -52,6 +52,9 @@ This kind of problems often occour in read projects, so it happens to be a good 
 **Scenario:persistence tests**   
    1. connect to embedded instance using "jdbc:hsqldb:mem:f2g;sql.syntax_ora=true"
 
+**Q**: How do you write tests for persistence components?  
+**A**: This is not easy to answer, refer to <a href="how-to-write-persistence-tests.md">this</a> for more detail.
+
 
 
 # Resources
