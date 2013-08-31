@@ -11,6 +11,7 @@
 		class="com.github.hippoom.food2go.application.impl.TransactionalPlaceOrderServiceImpl">
 		<property name="pendingOrderFactory" ref="pendingOrderFactory" />
 		<property name="pendingOrderRepository" ref="pendingOrderRepository" />
+		<property name="restaurantRepository" ref="restaurantRepository" />
 	</bean>
 
 </beans>
