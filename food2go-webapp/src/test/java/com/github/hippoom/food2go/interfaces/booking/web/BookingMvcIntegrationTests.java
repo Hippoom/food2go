@@ -71,7 +71,6 @@ public class BookingMvcIntegrationTests implements IntegrationTests {
 	@Autowired
 	private RestaurantRepository restaurantRepository;
 
-
 	@Before
 	public void setup() {
 		this.mockMvc = webAppContextSetup(this.wac).build();
@@ -244,6 +243,22 @@ public class BookingMvcIntegrationTests implements IntegrationTests {
 						new OrderLine(menuItem1.getName(),
 								menuItem1.getPrice(), 1), new OrderLine(
 								menuItem2.getName(), menuItem2.getPrice(), 2)));
+	}
+
+	@Test
+	public void fowardsToMakePaymentView() throws Exception {
+
+		final PendingOrder pendingOrder = new PendingOrderFixture().build();
+
+		when(pendingOrderRepository.findOne(pendingOrder.getTrackingId()))
+				.thenReturn(pendingOrder);
+
+		mockMvc.perform(
+				get("/order/" + pendingOrder.getTrackingId().getValue()
+						+ "/payment"))
+				.andExpect(forwardedUrl("/WEB-INF/jsp/booking/payment.jsp"))
+				.andExpect(model().attribute("pendingOrder", pendingOrder));
+
 	}
 
 	private String twoHoursLater() {

@@ -32,7 +32,6 @@ import com.github.hippoom.food2go.domain.model.order.Address;
 import com.github.hippoom.food2go.domain.model.order.PendingOrderFixture;
 import com.github.hippoom.test.dbunit.DatabaseOperationBuilder;
 
-import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -48,6 +47,7 @@ public class PlaceOrderSteps implements ApplicationContextAware {
 			.defaultDeliveryAddressFixture().build();
 	private String deliveryTime = nextSaturday(9, 00);
 	private Content content;
+	private String trackingId;
 
 	@Given("^restaurants ready$")
 	public void restaurants_ready() throws Throwable {
@@ -79,7 +79,13 @@ public class PlaceOrderSteps implements ApplicationContextAware {
 
 	@Then("^an pending order is placed$")
 	public void an_pending_order_is_placed() throws Throwable {
-		assertThat(content.asString(), containsString("TrackingId(value="));
+		String contentString = content.asString();
+		assertThat(contentString, containsString("TrackingId(value="));
+		trackingId = contentString.substring(
+				contentString.indexOf("TrackingId(value=") + 17,
+				contentString.indexOf(")") - 1);
+
+		System.err.println("trackingId=" + trackingId);
 	}
 
 	@Then("^all available restaurants are listed$")
@@ -151,15 +157,27 @@ public class PlaceOrderSteps implements ApplicationContextAware {
 
 	@When("^I pick desired menu items from a restaurant$")
 	public void I_pick_desired_menu_items_from_a_restaurant() throws Throwable {
-		assertThat(Request.Get("http://localhost:9999/food2go/booking/restaurant/3")
+		assertThat(
+				Request.Get(
+						"http://localhost:9999/food2go/booking/restaurant/3")
 						.execute().returnContent().asString()
 						.contains("menuItems"), is(true));
-		throw new PendingException();
+		DefaultHttpClient client = new DefaultHttpClient();
+		client.setRedirectStrategy(new LaxRedirectStrategy());
+		Executor exec = Executor.newInstance(client);
+		Response response = exec.execute(Request.Post(
+				"http://localhost:9999/food2go/booking/order/" + trackingId
+						+ "/updateOrderLines").bodyForm(
+				param("restaurantId", "3"),
+				param("orderLines[0].name", "Grilled beef"),
+				param("orderLines[0].price", "20.00"),
+				param("orderLines[0].quantity", "1")));
+		content = response.returnContent();
 	}
 
 	@Then("^order items are updated$")
 	public void order_items_are_updated() throws Throwable {
-		// Express the Regexp above with the code you wish you had
-		throw new PendingException();
+		String contentString = content.asString();
+		assertThat(contentString, containsString("TrackingId(value="));
 	}
 }
