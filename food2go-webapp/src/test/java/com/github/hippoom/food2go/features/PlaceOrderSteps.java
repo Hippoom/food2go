@@ -32,6 +32,7 @@ import com.github.hippoom.food2go.domain.model.order.Address;
 import com.github.hippoom.food2go.domain.model.order.PendingOrderFixture;
 import com.github.hippoom.test.dbunit.DatabaseOperationBuilder;
 
+import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -179,5 +180,18 @@ public class PlaceOrderSteps implements ApplicationContextAware {
 	public void order_items_are_updated() throws Throwable {
 		String contentString = content.asString();
 		assertThat(contentString, containsString("TrackingId(value="));
+	}
+
+	@When("^I provide my credit card$")
+	public void I_provide_my_credit_card() throws Throwable {
+		// Express the Regexp above with the code you wish you had
+		throw new PendingException();
+	}
+
+	@Then("^order is updated with the payment information given$")
+	public void order_is_updated_with_the_payment_information_given()
+			throws Throwable {
+		// Express the Regexp above with the code you wish you had
+		throw new PendingException();
 	}
 }

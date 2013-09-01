@@ -13,7 +13,9 @@ When I submit delivery address and delivery time
 Then an pending order is placed
 And all available restaurants are listed
 When I pick desired menu items from a restaurant
-Then order items are updated 
+Then order items are updated
+When I provide my credit card
+Then order is updated with the payment information given   
 
 Scenario: Customer tries to place an pending order but failed for undeliverable address
 
