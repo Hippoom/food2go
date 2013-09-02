@@ -76,7 +76,7 @@ public class OrderRepositoryPersistenceTests {
 }
 </pre>
 
-But this is far from perfect. Hibernate and some other orm framework doesn't send SQL to the database until the transaction is committed, so your assert code runs against uncommitted data. Personally, I don't like this style, it makes me feel unsafe because some constaints could only be checked by the database itself(length, unqiue etc). So what we need is a mechanism could commit a transaction before the assert code. Fortunately, spring framework provides us TransactionTemplate.
+But this is far from perfect. Hibernate and some other orm framework doesn't send SQL to the database until the transaction is committed, so your assert code runs against uncommitted data. Personally, I don't like this style, it makes me feel unsafe because some constaints could only be checked by the database itself(length, uniqueness etc). So what we need is a mechanism could commit a transaction before the assert code. Fortunately, spring framework provides us TransactionTemplate.
 
 <pre>
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -85,9 +85,8 @@ public class OrderRepositoryPersistenceTests {
     @Autowired
     private OrderRepository repository;
     @Autowired
-	private PlatformTransactionManager transactionManager;
+    private PlatformTransactionManager transactionManager;
     
-    @Transactional
     @Test
     public void updates() throws Throwable {
     
@@ -105,7 +104,7 @@ public class OrderRepositoryPersistenceTests {
             }
         });
 
-		assertThat(actual.....);//assert against committed data
+        assertThat(actual.....);//assert against committed data
     }
 }
 </pre>
